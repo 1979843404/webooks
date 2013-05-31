@@ -17,6 +17,13 @@ class Book(models.Model):
     tags = models.ManyToManyField(Tag, verbose_name=_('标签'), blank=True, null=True,
         through='BookTagShip', related_name='books')
     is_over = models.BooleanField(_(u'是否完结'), default=False)
+    author = models.CharField(_(u'作者'), max_length=const.DB_NAME_LENGTH, default="", blank=True, null=True)
+    description = models.CharField(_(u'描述'), max_length=const.DB_DESCRIPTION_LENGTH,
+        default="", blank=True, null=True)
+    score = models.BigIntegerField(_(u'评分'), default=0, blank=True, null=True)
+
+    def __unicode__(self):
+        return self.name
 
 class BookTagShip(models.Model):
     class Meta:
@@ -32,6 +39,7 @@ class Chapter(models.Model):
         app_label = 'webooks'
         db_table = 'webooks_chapter'
         verbose_name = verbose_name_plural = _('章节')
+        ordering = ['-number']
 
     number = models.IntegerField(_(u'章节号'), default=const.DB_NUMBER_DEFAULT)
     book = models.ForeignKey(Book, verbose_name=_('书'))
