@@ -16,6 +16,7 @@ class Book(models.Model):
     name = models.CharField(_(u'书名'), max_length=const.DB_NAME_LENGTH)
     tags = models.ManyToManyField(Tag, verbose_name=_('标签'), blank=True, null=True,
         through='BookTagShip', related_name='books')
+    is_over = models.BooleanField(_(u'是否完结'), default=False)
 
 class BookTagShip(models.Model):
     class Meta:
@@ -34,4 +35,8 @@ class Chapter(models.Model):
 
     number = models.IntegerField(_(u'章节号'), default=const.DB_NUMBER_DEFAULT)
     book = models.ForeignKey(Book, verbose_name=_('书'))
+
+class Page(models.Model):
+    number = models.IntegerField(_(u'页数'), default=const.DB_NUMBER_DEFAULT)
+    chapter = models.ForeignKey(Chapter, verbose_name=_(u'章节'))
     content = models.TextField(_(u'内容'), max_length=const.DB_CONTENT_LENGTH)
