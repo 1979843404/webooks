@@ -41,7 +41,7 @@ class SpiderHelper(object):
         file.write(content)
         file.close()
 
-    def get(self, url):
+    def get(self, url, *args, **kwargs):
         path = self.get_path(url)
         if os.path.exists(path):
             return self.read(path)

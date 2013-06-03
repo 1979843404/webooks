@@ -13,3 +13,6 @@ class Tag(models.Model):
         verbose_name = verbose_name_plural = _('标签')
 
     name = models.CharField(_(u'名字'), max_length=const.DB_NAME_LENGTH, unique=True)
+
+    def __unicode__(self):
+        return self.name
