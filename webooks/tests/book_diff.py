@@ -29,7 +29,7 @@ class ZhangBookDiff(object):
         print(src_content)
         print("相似度%f" %text_same.get_ratio(content, src_content) + "==="*5)
 
-        get_next = raw_input("是否继续: y/n \n".encode("utf-8"))
+        get_next = raw_input("是否结束: y/n \n".encode("utf-8"))
         if get_next == "y":
             return True
         else:
@@ -37,7 +37,7 @@ class ZhangBookDiff(object):
 
     def diff(self):
         book = self.get_book()
-        chapters = book.chapter_set.all()[:10]
+        chapters = book.chapter_set.all()
 
         for chapter in chapters:
             print("第" + number2chinese(chapter.number) + "章")
@@ -50,4 +50,4 @@ class ZhangBookDiff(object):
 
                 get_next = self.show(content, src_content)
                 if get_next:
-                    continue
+                    break
