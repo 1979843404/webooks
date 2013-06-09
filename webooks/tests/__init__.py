@@ -2,10 +2,3 @@
 # __author__ = chenchiyuan
 
 from __future__ import division, unicode_literals, print_function
-from books import Book, Chapter, Page
-
-__all__ = [
-    Book,
-    Chapter,
-    Page,
-]

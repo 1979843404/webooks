@@ -4,6 +4,7 @@
 from __future__ import division, unicode_literals, print_function
 from webooks.utils.alias import tran_lazy as _
 from django.db import models
+from django.db.models import Q
 from webooks.utils import const
 from webooks.models.tags import Tag
 from webooks.utils.util import number2chinese
@@ -28,7 +29,7 @@ class Book(models.Model, GetByUniqueMixin):
         return self.name
 
     @classmethod
-    def get_or_crate(cls, name, **kwargs):
+    def get_or_create(cls, name, **kwargs):
         item = cls.get_by_unique(name=name)
         if not item:
             item = cls(name=name, **kwargs)
@@ -52,7 +53,7 @@ class Chapter(models.Model, GetByUniqueMixin):
         app_label = 'webooks'
         db_table = 'webooks_chapter'
         verbose_name = verbose_name_plural = _('章节')
-        ordering = ['-number']
+        ordering = ['number']
 
     number = models.IntegerField(_(u'章节号'), default=const.DB_NUMBER_DEFAULT)
     book = models.ForeignKey(Book, verbose_name=_('书'))
@@ -62,12 +63,30 @@ class Chapter(models.Model, GetByUniqueMixin):
 
     @classmethod
     def get_or_create(cls, book, number, **kwargs):
-        pass
+        item = cls.get_by_queries(book=book, number=number)
+        if not item:
+            item = cls(book=book, number=number, **kwargs)
+            item.save()
+        return item
 
 class Page(models.Model, GetByUniqueMixin):
+    class Meta:
+        app_label = 'webooks'
+        db_table = 'webooks_page'
+        verbose_name = verbose_name_plural = _('页码')
+        ordering = ['number']
+
     number = models.IntegerField(_(u'页数'), default=const.DB_NUMBER_DEFAULT)
     chapter = models.ForeignKey(Chapter, verbose_name=_(u'章节'))
     content = models.TextField(_(u'内容'), max_length=const.DB_CONTENT_LENGTH)
 
     def __unicode__(self):
         return "%s_%d页" % (self.chapter, self.number)
+
+    @classmethod
+    def get_or_create(cls, number, chapter, **kwargs):
+        item = cls.get_by_queries(number=number, chapter=chapter)
+        if not item:
+            item = cls(number=number, chapter=chapter, **kwargs)
+            item.save()
+        return item

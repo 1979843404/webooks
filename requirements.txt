@@ -4,3 +4,4 @@ unidecode
 requests
 python-Levenshtein
 beautifulsoup4
+lxml
