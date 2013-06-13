@@ -24,6 +24,7 @@ class Book(models.Model, GetByUniqueMixin):
     description = models.CharField(_(u'描述'), max_length=const.DB_DESCRIPTION_LENGTH,
         default="", blank=True, null=True)
     score = models.BigIntegerField(_(u'评分'), default=0, blank=True, null=True)
+   # lock = models.BooleanField(_(u'锁定'), default=False, blank=True, null=True)
 
     def __unicode__(self):
         return self.name
@@ -35,6 +36,21 @@ class Book(models.Model, GetByUniqueMixin):
             item = cls(name=name, **kwargs)
             item.save()
         return item
+
+    def to_txt(self, path):
+        if not path.endswith("txt"):
+            path = "%s.txt" % path
+
+        file_handle = open(path, "w")
+        chapters = self.chapter_set.all()
+        for chapter in chapters:
+            pages = chapter.page_set.all()
+            title = unicode(chapter).encode('utf-8')
+            file_handle.write(title)
+            for page in pages:
+                content = page.content
+                file_handle.write(content.encode('utf-8'))
+        file_handle.close()
 
 class BookTagShip(models.Model, GetByUniqueMixin):
     class Meta:
@@ -55,8 +71,11 @@ class Chapter(models.Model, GetByUniqueMixin):
         verbose_name = verbose_name_plural = _('章节')
         ordering = ['number']
 
+    name = models.CharField(_(u'名字'), max_length=const.DB_NAME_LENGTH,
+        default="", blank=True, null=True)
     number = models.IntegerField(_(u'章节号'), default=const.DB_NUMBER_DEFAULT)
     book = models.ForeignKey(Book, verbose_name=_('书'))
+    #lock = models.BooleanField(_(u'锁定'), default=False, blank=True, null=True)
 
     def __unicode__(self):
         return "%s_%d章" % (self.book.name, self.number)
@@ -79,6 +98,7 @@ class Page(models.Model, GetByUniqueMixin):
     number = models.IntegerField(_(u'页数'), default=const.DB_NUMBER_DEFAULT)
     chapter = models.ForeignKey(Chapter, verbose_name=_(u'章节'))
     content = models.TextField(_(u'内容'), max_length=const.DB_CONTENT_LENGTH)
+    #lock = models.BooleanField(_(u'锁定'), default=False, blank=True, null=True)
 
     def __unicode__(self):
         return "%s_%d页" % (self.chapter, self.number)

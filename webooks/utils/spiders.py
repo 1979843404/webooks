@@ -8,8 +8,9 @@ import requests
 import os
 
 class SpiderHelper(object):
-    def __init__(self, suffix="xml"):
+    def __init__(self, suffix="xml", cache=True):
         self.suffix = suffix
+        self.cache = cache
 
     def name_hash(self, name):
         name = name.replace(".", "")
@@ -31,6 +32,9 @@ class SpiderHelper(object):
     def save(self, url):
         res = requests.get(url, headers=const.SPIDER_HEADERS)
         content = res.content
+        if not self.cache:
+            return content
+
         name = md5(url) + ".xml"
         hash_dir = self.name_hash(name)
         path = os.path.join(const.SPIDER_BASE_PATH, hash_dir, name)
@@ -40,11 +44,11 @@ class SpiderHelper(object):
         file = open(path, "w")
         file.write(content)
         file.close()
+        return content
 
     def get(self, url, *args, **kwargs):
         path = self.get_path(url)
         if os.path.exists(path):
             return self.read(path)
 
-        self.save(url)
-        return self.read(path)
+        return self.save(url)

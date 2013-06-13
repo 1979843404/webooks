@@ -22,7 +22,7 @@ class GetByUniqueMixin(object):
 
         try:
             item = cls.objects.get(query)
-        except Exception, ex:
+        except Exception:
             item = None
         return item
 

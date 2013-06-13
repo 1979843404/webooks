@@ -5,3 +5,4 @@
 data/
 webooks/migrations/
 webooks/spiders/
+*.txt
