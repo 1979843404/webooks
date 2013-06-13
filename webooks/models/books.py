@@ -80,6 +80,14 @@ class Chapter(models.Model, GetByUniqueMixin):
     def __unicode__(self):
         return "%s_%d章" % (self.book.name, self.number)
 
+    def full_content(self):
+        pages = self.page_set.all()
+        content = ""
+        for page in pages:
+            content += page.content
+            content += "\n"
+        return content
+
     @classmethod
     def get_or_create(cls, book, number, **kwargs):
         item = cls.get_by_queries(book=book, number=number)

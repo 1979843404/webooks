@@ -14,10 +14,4 @@ class ChapterAdminForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(ChapterAdminForm, self).__init__(*args, **kwargs)
-        pages = self.instance.page_set.all()
-        content = ""
-        for page in pages:
-            content += page.content
-            content += "\n"
-
-        self.initial.update({"full_content": content})
+        self.initial.update({"full_content": self.instance.full_content})
