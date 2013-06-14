@@ -24,7 +24,7 @@ class Book(models.Model, GetByUniqueMixin):
     description = models.CharField(_(u'描述'), max_length=const.DB_DESCRIPTION_LENGTH,
         default="", blank=True, null=True)
     score = models.BigIntegerField(_(u'评分'), default=0, blank=True, null=True)
-   # lock = models.BooleanField(_(u'锁定'), default=False, blank=True, null=True)
+    lock = models.BooleanField(_(u'锁定'), default=False)
 
     def __unicode__(self):
         return self.name
@@ -71,14 +71,14 @@ class Chapter(models.Model, GetByUniqueMixin):
         verbose_name = verbose_name_plural = _('章节')
         ordering = ['number']
 
-    name = models.CharField(_(u'名字'), max_length=const.DB_NAME_LENGTH,
+    title = models.CharField(_(u'章节名'), max_length=const.DB_NAME_LENGTH,
         default="", blank=True, null=True)
     number = models.IntegerField(_(u'章节号'), default=const.DB_NUMBER_DEFAULT)
     book = models.ForeignKey(Book, verbose_name=_('书'))
-    #lock = models.BooleanField(_(u'锁定'), default=False, blank=True, null=True)
+    lock = models.BooleanField(_(u'锁定'), default=False)
 
     def __unicode__(self):
-        return "%s_%d章" % (self.book.name, self.number)
+        return "%s" %self.title
 
     def full_content(self):
         pages = self.page_set.all()
@@ -106,7 +106,7 @@ class Page(models.Model, GetByUniqueMixin):
     number = models.IntegerField(_(u'页数'), default=const.DB_NUMBER_DEFAULT)
     chapter = models.ForeignKey(Chapter, verbose_name=_(u'章节'))
     content = models.TextField(_(u'内容'), max_length=const.DB_CONTENT_LENGTH)
-    #lock = models.BooleanField(_(u'锁定'), default=False, blank=True, null=True)
+    lock = models.BooleanField(_(u'锁定'), default=False)
 
     def __unicode__(self):
         return "%s_%d页" % (self.chapter, self.number)
