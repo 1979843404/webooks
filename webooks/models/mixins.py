@@ -26,5 +26,18 @@ class GetByUniqueMixin(object):
             item = None
         return item
 
+    @classmethod
+    def filter_by_queries(cls, **kwargs):
+        query_list = [Q(**{key: value}) for key, value in kwargs.items()]
+        query = query_list.pop()
+        for query_append in query_list:
+            query &= query_append
+
+        try:
+            item = cls.objects.filter(query)
+        except Exception:
+            item = None
+        return item
+
 class GetOrCreateMixin(object):
     pass
