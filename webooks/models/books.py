@@ -76,45 +76,18 @@ class Chapter(models.Model, GetByUniqueMixin):
     number = models.IntegerField(_(u'章节号'), default=const.DB_NUMBER_DEFAULT)
     book = models.ForeignKey(Book, verbose_name=_('书'))
     lock = models.BooleanField(_(u'锁定'), default=False)
+    content = models.TextField(_(u'内容'), default="", max_length=const.DB_CONTENT_LENGTH)
 
     def __unicode__(self):
         return "%s" %self.title
 
     def full_content(self):
-        pages = self.page_set.all()
-        content = ""
-        for page in pages:
-            content += page.content
-            content += "\n"
-        return content
+        return self.content
 
     @classmethod
     def get_or_create(cls, book, number, **kwargs):
         item = cls.get_by_queries(book=book, number=number)
         if not item:
             item = cls(book=book, number=number, **kwargs)
-            item.save()
-        return item
-
-class Page(models.Model, GetByUniqueMixin):
-    class Meta:
-        app_label = 'webooks'
-        db_table = 'webooks_page'
-        verbose_name = verbose_name_plural = _('页码')
-        ordering = ['number']
-
-    number = models.IntegerField(_(u'页数'), default=const.DB_NUMBER_DEFAULT)
-    chapter = models.ForeignKey(Chapter, verbose_name=_(u'章节'))
-    content = models.TextField(_(u'内容'), max_length=const.DB_CONTENT_LENGTH)
-    lock = models.BooleanField(_(u'锁定'), default=False)
-
-    def __unicode__(self):
-        return "%s_%d页" % (self.chapter, self.number)
-
-    @classmethod
-    def get_or_create(cls, number, chapter, **kwargs):
-        item = cls.get_by_queries(number=number, chapter=chapter)
-        if not item:
-            item = cls(number=number, chapter=chapter, **kwargs)
             item.save()
         return item

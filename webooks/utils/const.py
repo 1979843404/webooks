@@ -2,12 +2,10 @@
 # __author__ = chenchiyuan
 
 from __future__ import division, unicode_literals, print_function
-from django.conf import settings
-import os
 
 # DATABASES
 DB_NAME_LENGTH = 128
-DB_CONTENT_LENGTH = 256*256*12
+DB_CONTENT_LENGTH = 256*256*12*12
 DB_DESCRIPTION_LENGTH = 256*24
 DB_NUMBER_DEFAULT = 0
 
