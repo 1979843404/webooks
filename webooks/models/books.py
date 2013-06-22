@@ -26,6 +26,10 @@ class Book(models.Model, GetByUniqueMixin):
     score = models.BigIntegerField(_(u'评分'), default=0, blank=True, null=True)
     lock = models.BooleanField(_(u'锁定'), default=False)
 
+    src_name = models.CharField(_(u'来源名'), max_length=const.DB_SHORT_LENGTH, blank=True, null=True, default="")
+    src_id = models.CharField(_(u'来源id'), max_length=const.DB_MIDDLE_LENGTH, blank=True, null=True, default="")
+    src_url = models.CharField(_(u'来源URL'), max_length=const.DB_URL_LENGTH, blank=True, null=True, default="")
+
     def __unicode__(self):
         return self.name
 

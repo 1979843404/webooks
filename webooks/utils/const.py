@@ -4,7 +4,10 @@
 from __future__ import division, unicode_literals, print_function
 
 # DATABASES
+DB_SHORT_LENGTH = 16
+DB_MIDDLE_LENGTH  = 32
 DB_NAME_LENGTH = 128
+DB_URL_LENGTH = 256
 DB_CONTENT_LENGTH = 256*256*12*12
 DB_DESCRIPTION_LENGTH = 256*24
 DB_NUMBER_DEFAULT = 0
