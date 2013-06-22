@@ -3,3 +3,10 @@ south
 unidecode
 requests
 python-Levenshtein
+beautifulsoup4
+lxml
+djangorestframework
+markdown
+django-filter
+pygments
+gunicorn
