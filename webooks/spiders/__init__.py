@@ -2,8 +2,8 @@
 # __author__ = chenchiyuan
 
 from __future__ import division, unicode_literals, print_function
-from zhangbook import ZBSpider as ZhangBook
-__all__ = [ZhangBook, ]
+from zhangbook import ZhangBookSpider
+__all__ = [ZhangBookSpider, ]
 
 class SpiderFactory(object):
     mapping = dict(map(lambda cls: (cls.__name__, cls), __all__))

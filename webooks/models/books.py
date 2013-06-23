@@ -4,10 +4,8 @@
 from __future__ import division, unicode_literals, print_function
 from webooks.utils.alias import tran_lazy as _
 from django.db import models
-from django.db.models import Q
 from webooks.utils import const
 from webooks.models.tags import Tag
-from webooks.utils.util import number2chinese
 from webooks.models.mixins import GetByUniqueMixin
 
 class Book(models.Model, GetByUniqueMixin):
@@ -96,4 +94,11 @@ class Chapter(models.Model, GetByUniqueMixin):
         if not item:
             item = cls(book=book, number=number, **kwargs)
             item.save()
-        return item
+        return
+
+    def lazy_loading(self):
+        from webooks.middles import SourceFactory
+
+        src = self.book.src_name
+        source = SourceFactory.get_source(src)
+        source.get_chapter_content(self)
