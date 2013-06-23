@@ -123,7 +123,7 @@ class Chapter(models.Model, GetByUniqueMixin):
         if not item:
             item = cls(book=book, number=number, **kwargs)
             item.save()
-        return
+        return item
 
     def lazy_loading(self):
         from webooks.middles import SourceFactory
