@@ -15,6 +15,7 @@ DB_NUMBER_DEFAULT = 0
 # URL CONFIG
 URL_BOOK_ID = "(?P<book_id>[0-9]+)"
 URL_CHAPTER_ID = "(?P<chapter_id>[0-9]+)"
+URL_ID = "(?P<id>[0-9]+)"
 
 # SPIDERS
 SPIDER_BASE_PATH = "/Volumes/Macintosh HD/Users/shadow/data" #os.path.join(settings.PROJECT_HOME, 'data')

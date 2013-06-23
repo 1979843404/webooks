@@ -2,6 +2,7 @@
 # __author__ = chenchiyuan
 
 from __future__ import division, unicode_literals, print_function
+from django.db.models import permalink
 from webooks.utils.alias import tran_lazy as _
 from django.db import models
 from webooks.utils import const
@@ -87,6 +88,34 @@ class Chapter(models.Model, GetByUniqueMixin):
 
     def full_content(self):
         return self.content
+
+    @permalink
+    def get_absolute_url(self):
+        return ('chapter_detail', [str(self.book_id), str(self.id)])
+
+    @property
+    def before(self):
+        queries = {
+            "book_id": self.book_id,
+            "number": self.number-1
+        }
+        chapter = Chapter.get_by_queries(**queries)
+        if not chapter:
+            return ""
+        else:
+            return chapter.get_absolute_url()
+
+    @property
+    def after(self):
+        queries = {
+            "book_id": self.book_id,
+            "number": self.number+1
+        }
+        chapter = Chapter.get_by_queries(**queries)
+        if not chapter:
+            return ""
+        else:
+            return chapter.get_absolute_url()
 
     @classmethod
     def get_or_create(cls, book, number, **kwargs):
