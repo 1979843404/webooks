@@ -122,7 +122,8 @@ INSTALLED_APPS = (
     'django.contrib.admindocs',
     'webooks',
     'south',
-    'rest_framework'
+    'rest_framework',
+    'raven.contrib.django',
 )
 
 # A sample logging configuration. The only tangible logging
@@ -165,4 +166,7 @@ REST_FRAMEWORK = {
     # or allow read-only access for unauthenticated users.
     'PAGINATE_BY': 10
 }
+
+# SENTRY CONFIG
+SENTRY_DSN = 'http://5ca313737a5d4a6f90b4e1c5e2ebdf69:94b8765b39fb4563b741f50a7785e0d3@127.0.0.1:9555/2'
 
