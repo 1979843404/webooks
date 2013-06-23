@@ -82,6 +82,8 @@ class Chapter(models.Model, GetByUniqueMixin):
     lock = models.BooleanField(_(u'锁定'), default=False)
     content = models.TextField(_(u'内容'), default="", max_length=const.DB_CONTENT_LENGTH)
 
+    src_url = models.CharField(_(u'来源URL'), max_length=const.DB_URL_LENGTH, blank=True, null=True, default="")
+
     def __unicode__(self):
         return "%s" %self.title
 
