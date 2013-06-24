@@ -22,7 +22,14 @@ class ChapterList(ListAPIView):
     paginate_by_param = "page"
 
     def get_queryset(self):
+        self.book_lazyloading()
         return Chapter.filter_by_queries(**self.kwargs)
+
+    def book_lazyloading(self):
+        book_id = self.kwargs.get("book_id", "")
+        book = Book.get_by_queries(id=book_id)
+        if book and (not book.chapter_set.all().count()):
+            book.lazy_loading()
 
 class ChapterView(APIView):
     def get(self, request, **kwargs):

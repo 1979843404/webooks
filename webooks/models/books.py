@@ -55,6 +55,13 @@ class Book(models.Model, GetByUniqueMixin):
                 file_handle.write(content.encode('utf-8'))
         file_handle.close()
 
+    def lazy_loading(self):
+        from webooks.middles import SourceFactory
+
+        src = self.src_name
+        source = SourceFactory.get_source(src)
+        source.get_chapters(self)
+
 class BookTagShip(models.Model, GetByUniqueMixin):
     class Meta:
         app_label = "webooks"
