@@ -6,3 +6,6 @@ data/
 webooks/migrations/
 webooks/spiders/
 *.txt
+
+config/override.py
+config/deploy_env

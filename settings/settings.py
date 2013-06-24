@@ -1,4 +1,5 @@
 # Django settings for settings project.
+from config import config
 import os
 
 PROJECT_HOME = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
@@ -168,5 +169,4 @@ REST_FRAMEWORK = {
 }
 
 # SENTRY CONFIG
-SENTRY_DSN = 'http://5ca313737a5d4a6f90b4e1c5e2ebdf69:94b8765b39fb4563b741f50a7785e0d3@127.0.0.1:9555/2'
-
+SENTRY_DSN = config.get("sentry", "dsn")
