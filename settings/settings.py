@@ -4,8 +4,8 @@ import os
 
 PROJECT_HOME = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
 
-DEBUG = config.get("django", "debug")
-TEMPLATE_DEBUG = DEBUG
+DEBUG = config.getboolean("django", "debug")
+TEMPLATE_DEBUG = config.getboolean("django", "template_dubug")
 
 ADMINS = (
     # ('Your Name', 'your_email@example.com'),
