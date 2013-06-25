@@ -9,7 +9,9 @@ from webooks.utils import const
 class BookSerializer(serializers.ModelSerializer):
     class Meta:
         model = Book
-        fields = ("id", "name", "author", "description")
+        fields = ("id", "name", "author", "description", "absolute_url")
+
+    absolute_url = serializers.CharField(max_length=const.DB_URL_LENGTH, default="")
 
 class ChapterListSerializer(serializers.ModelSerializer):
     class Meta:

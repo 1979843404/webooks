@@ -32,6 +32,14 @@ class Book(models.Model, GetByUniqueMixin):
     def __unicode__(self):
         return self.name
 
+    @permalink
+    def get_absolute_url(self):
+        return ('book_detail', [self.id, ])
+
+    @property
+    def absolute_url(self):
+        return self.get_absolute_url
+
     @classmethod
     def get_or_create(cls, name, **kwargs):
         item = cls.get_by_unique(name=name)
