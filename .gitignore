@@ -8,4 +8,4 @@ webooks/spiders/
 *.txt
 
 config/override.py
-config/deploy_env
+config/deploy_env.py

@@ -170,3 +170,6 @@ REST_FRAMEWORK = {
 
 # SENTRY CONFIG
 SENTRY_DSN = config.get("sentry", "dsn")
+
+# SPIDER CONFIG
+SPIDER_BASE_DIR = config.get("spider", "base_dir")
