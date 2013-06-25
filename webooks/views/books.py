@@ -6,13 +6,27 @@ from rest_framework import status
 from rest_framework.generics import ListAPIView
 from rest_framework.views import APIView
 from webooks.models import Book, Chapter
-from webooks.apis.serializers.books import (BookSerializer,
+from webooks.apis.serializers.books import (BookSerializer, BookDetailSerializer,
     ChapterListSerializer, ChapterDetailSerializer)
 from rest_framework.response import Response
 
 class BookList(ListAPIView):
     queryset = Book.objects.all()
     serializer_class = BookSerializer
+
+class BookDetailView(APIView):
+    def get_object(self, book_id, **kwargs):
+        book = Book.get_by_queries(id=book_id)
+        if not book:
+            return None
+        return book
+
+    def get(self, request, **kwargs):
+        book = self.get_object(**kwargs)
+        serializer = BookDetailSerializer(book)
+        if not book:
+            return Response(serializer.errors, status=status.HTTP_404_NOT_FOUND)
+        return Response(serializer.data)
 
 class ChapterList(ListAPIView):
     serializer_class = ChapterListSerializer

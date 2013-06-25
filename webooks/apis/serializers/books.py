@@ -16,6 +16,10 @@ class ChapterListSerializer(serializers.ModelSerializer):
         model = Chapter
         fields = ("id", "title", "book")
 
+class BookDetailSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Book
+
 class ChapterDetailSerializer(serializers.ModelSerializer):
     class Meta:
         model = Chapter
