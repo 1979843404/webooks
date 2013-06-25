@@ -31,9 +31,9 @@ DATABASES = {
 TIME_ZONE = 'Asia/Shanghai'
 
 ALLOWED_HOST = [
-    '127.0.0.1',
-    ".zoneke.com",
-    "42.121.86.43",
+    "localhost",
+    "127.0.0.1",
+    ".zoneke.com"
 ]
 
 # Language code for this installation. All choices can be found here:
