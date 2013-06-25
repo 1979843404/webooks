@@ -60,6 +60,15 @@ class Book(models.Model, GetByUniqueMixin):
 
         src = self.src_name
         source = SourceFactory.get_source(src)
+        def check_book():
+            if any([self.author, self.description, self.score]):
+                return False
+            else:
+                return True
+        need_load = check_book()
+        if need_load:
+            source.get_book_detail(self)
+
         source.get_chapters(self)
 
 class BookTagShip(models.Model, GetByUniqueMixin):

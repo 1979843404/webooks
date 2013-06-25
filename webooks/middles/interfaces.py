@@ -9,6 +9,9 @@ class SourceInterface(object):
     def get_all_books(self):
         raise NotImplemented
 
+    def get_book_detail(self, book, *args, **kwargs):
+        raise NotImplemented
+
     def get_chapters(self, book, *args, **kwargs):
         raise NotImplemented
 

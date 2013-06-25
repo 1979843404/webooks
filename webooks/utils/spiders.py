@@ -47,7 +47,11 @@ class SpiderHelper(object):
 
     def get(self, url, cache=True, *args, **kwargs):
         path = self.get_path(url)
-        if os.path.exists(path):
-            return self.read(path)
+        if cache:
+            if os.path.exists(path):
+                return self.read(path)
+        else:
+            if os.path.exists(path):
+                os.remove(path)
 
         return self.save(url, cache, *args, **kwargs)

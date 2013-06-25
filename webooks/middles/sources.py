@@ -14,7 +14,7 @@ class SourceZhangBook(SourceInterface):
         self.save_books(books)
 
     def get_chapters(self, book, *args, **kwargs):
-        chapters = self.spider.get_chapters(book.name, book_id=int(book.src_id), start=1)
+        chapters = self.spider.get_chapters(book.name, book_id=book.src_id, start=1)
         for chapter in chapters:
             chapter['book_id'] = book.id
             print("Saving >>>>>")
@@ -23,8 +23,16 @@ class SourceZhangBook(SourceInterface):
             item = ChapterService.get_or_create(queries=chapter, **chapter)
             print("<<<<< Done")
 
+    def get_book_detail(self, book, *args, **kwargs):
+        book_id = book.src_id
+        is_over = book.is_over
+        content = self.spider.get_book_detail(book_id, cache=is_over, **kwargs)
+        for key, value in content.items():
+            setattr(book, key, value)
+        book.save()
+
     def get_chapter_content(self, chapter, *args, **kwargs):
-        content = self.spider.get_chapter_content(int(chapter.book.src_id), chapter.number)
+        content = self.spider.get_chapter_content(chapter.book.src_id, chapter.number)
         if not content:
             return ""
         else:
