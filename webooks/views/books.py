@@ -13,13 +13,9 @@ from rest_framework.response import Response
 class BookList(ListAPIView):
     queryset = Book.objects.all()
     serializer_class = BookSerializer
-    paginate_by = 10
-    paginate_by_param = "page"
 
 class ChapterList(ListAPIView):
     serializer_class = ChapterListSerializer
-    paginate_by = 10
-    paginate_by_param = "page"
 
     def get_queryset(self):
         self.book_lazyloading()

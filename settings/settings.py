@@ -165,7 +165,8 @@ REST_FRAMEWORK = {
 
     # Use Django's standard `django.contrib.auth` permissions,
     # or allow read-only access for unauthenticated users.
-    'PAGINATE_BY': 10
+    'PAGINATE_BY': 10,
+    'PAGINATE_BY_PARAM': 'page_size'
 }
 
 # SENTRY CONFIG
