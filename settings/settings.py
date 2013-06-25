@@ -4,7 +4,7 @@ import os
 
 PROJECT_HOME = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
 
-DEBUG = True
+DEBUG = config.get("django", "debug")
 TEMPLATE_DEBUG = DEBUG
 
 ADMINS = (
