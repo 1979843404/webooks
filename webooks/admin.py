@@ -8,10 +8,14 @@ from webooks.forms import ChapterAdminForm
 
 
 class BookAdmin(admin.ModelAdmin):
-    pass
+    list_filter = ("is_over", )
+    search_fields = ("name", )
 
 class ChapterAdmin(admin.ModelAdmin):
     form = ChapterAdminForm
+    search_fields = ("book__name", )
+    ordering = ["number"]
+    list_display = ["title", "number", "book", "src_url"]
 
 class StrategyAdmin(admin.ModelAdmin):
     pass

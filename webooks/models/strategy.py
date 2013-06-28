@@ -20,6 +20,9 @@ class Strategy(models.Model, GetByUniqueMixin):
         default=const.UPDATE_BY_TIME, blank=True, null=True)
     data = models.CharField(_('具体策略'),max_length=const.DB_MIDDLE_LENGTH, blank=True, null=True)
 
+    def __unicode__(self):
+        return "%s : %s" % (self.name, self.data)
+
     @classmethod
     def get_times(cls, time=now().time()):
         """
