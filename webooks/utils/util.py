@@ -3,6 +3,10 @@
 
 from __future__ import division, unicode_literals, print_function
 import hashlib
+from datetime import datetime as py_time
+from django.utils.timezone import make_aware, get_default_timezone, is_naive, now
+from datetime import timedelta
+import const
 
 def md5(input):
     m = hashlib.md5()
@@ -31,3 +35,29 @@ def number2chinese(number):
         match = match[:-1]
     result = map(lambda x: x[0] + x[1] if x[0] != "0" else '零', match[::-1])
     return "".join(result)
+
+def datetime_to_str(datetime, format=const.DATETIME_FORMAT):
+    if is_naive(datetime): # datetime to utc time
+        datetime = to_aware_datetime(datetime)
+
+    return datetime.strftime(format)
+
+def datetime_delta(datetime, **kwargs):
+    delta = timedelta(**kwargs)
+    return datetime - delta
+
+def str_to_datetime(str, format=const.DATETIME_FORMAT):
+    if isinstance(str, py_time):
+        if is_naive(str):
+            return to_aware_datetime(str)
+        else:
+            return str
+
+    return to_aware_datetime(py_time.strptime(str, format))
+
+def to_aware_datetime(value):
+    time_zone = get_default_timezone()
+    return make_aware(value, time_zone)
+
+def datetime_now():
+    return now()

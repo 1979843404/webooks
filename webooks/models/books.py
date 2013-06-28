@@ -8,6 +8,7 @@ from django.db import models
 from webooks.utils import const
 from webooks.models.tags import Tag
 from webooks.models.mixins import GetByUniqueMixin
+from webooks.models.strategy import Strategy
 
 class Book(models.Model, GetByUniqueMixin):
     class Meta:
@@ -28,6 +29,8 @@ class Book(models.Model, GetByUniqueMixin):
     src_name = models.CharField(_(u'来源名'), max_length=const.DB_SHORT_LENGTH, blank=True, null=True, default="")
     src_id = models.CharField(_(u'来源id'), max_length=const.DB_MIDDLE_LENGTH, blank=True, null=True, default="")
     src_url = models.CharField(_(u'来源URL'), max_length=const.DB_URL_LENGTH, blank=True, null=True, default="")
+
+    strategy = models.ForeignKey(Strategy, verbose_name=_(u'更新策略'), blank=True, null=True)
 
     def __unicode__(self):
         return self.name

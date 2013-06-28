@@ -29,7 +29,7 @@ class ZhangBookSpider(BookSpiderInterface):
         books = OrderedDict()
         for page in range(1, limit+1):
             url = lambda  page:\
-            "http://zhangbook.com/book/bookTop.aspx?uid=u0&ctg=0&pn=%d&top=1&stype=0&gl=0&st=1" %page
+            "http://zhangbook.com/book/bookTop.aspx?uid=u0&ctg=0&pn=%d&top=1&stype=0&gl=0&st=2" %page
             content = helper.get(url(page), cache=False)
             soup = SoupHelper.get_soup(content)
             tag_as = soup.find_all('a')
@@ -37,7 +37,7 @@ class ZhangBookSpider(BookSpiderInterface):
             def is_book(href):
                 return "book=" in href
 
-            book_url_lambda =lambda book_id: "http://zhangbook.com/book/bookinfo.aspx?book=%d" %book_id
+            book_url_lambda =lambda book_id: "http://zhangbook.com/book/bookinfo.aspx?book=%s" %book_id
 
             for tag in tag_as:
                 href = tag.attrs.get('href', "")

@@ -39,5 +39,6 @@ class GetByUniqueMixin(object):
             item = None
         return item
 
+
 class GetOrCreateMixin(object):
     pass
