@@ -15,6 +15,7 @@ class Book(models.Model, GetByUniqueMixin):
         app_label = 'webooks'
         db_table = 'webooks_book'
         verbose_name = verbose_name_plural = _('书')
+        ordering = ['id', 'score']
 
     name = models.CharField(_(u'书名'), max_length=const.DB_NAME_LENGTH)
     tags = models.ManyToManyField(Tag, verbose_name=_('标签'), blank=True, null=True,
