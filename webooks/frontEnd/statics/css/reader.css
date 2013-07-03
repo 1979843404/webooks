@@ -1,44 +1,72 @@
 body{
-    background-color: #f6f3f0;
+    background-color: #f5f5f5;
     font-family: "Microsoft Yahei",'微软雅黑','宋体',"Helvetica Neue",Helvetica,Arial,sans-serif;
+    font-size: 13px;
 }
 
-article, aside, details, figcaption, figure, footer, header, hgroup, menu, nav, section {
-    display: block;
+/*some setting i use in this project*/
+h2{
+    font-size: 22px;
 }
+
+h3{
+    font-size:18px;
+}
+
+/*some setting i use in this project*/
 
 #container{
     width: 980px;
     margin: 0 auto;
+    background-color: #fff;
+    border: 1px solid #d3d3d3
 }
 
 header{
     height: 100px;
+    line-height: 100px;
+}
+
+header h2{
+    text-align: center;
 }
 
 
 .catalog-container{
     float: right;
-    width: 280px;
-    border: 1px solid black;
+    width: 240px;
+    margin-top: 16px;
+    font-size: 16px;
+}
+
+.catalog-container li{
+    text-indent: 3em;
+    padding: 1px;
+    letter-spacing: 0.2em;
+    cursor: pointer;
 }
 
 .content{
-    width: 600px;
+    width: 680px;
     float: left;
-    border: 1px solid black;
-    margin-bottom: 10px;
+    padding-left: 15px;
     color: #3f3a3a;
 }
 
-h3{
-    margin-top: 8px;
+.content article{
+    font-size: 16px;
+    line-height: 22px;
+    letter-spacing: 0.1em;
+}
+
+.content h3{
+    padding: 4px 0 8px 0;
 }
 
 footer{
     clear: both;
-    border: 1px solid black;
-    padding: 5px;
+    border-top: 1px dashed #cacaca;
+    padding: 8px 0 16px 0;
     text-align: center;
 }
 
@@ -53,6 +81,11 @@ footer{
 .control-btn{
     padding: 5px;
     min-width: 44px;
+    font-size: 16px;
+}
+
+control-btn:hover{
+    text-decoration: underline;
 }
 
 .prev{
