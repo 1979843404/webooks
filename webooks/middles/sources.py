@@ -17,10 +17,14 @@ class SourceZhangBook(SourceInterface):
         chapters = self.spider.get_chapters(book.name, book_id=book.src_id, start=1)
         for chapter in chapters:
             chapter['book_id'] = book.id
+            queries = {
+                "title": chapter.get("title", ""),
+                "src_url": chapter.get("src_url", "")
+            }
             print("Saving >>>>>")
             print(chapter['title'])
             print(chapter['number'])
-            item = ChapterService.get_or_create(queries=chapter, **chapter)
+            item = ChapterService.get_or_create(queries=queries, **chapter)
             print("<<<<< Done")
 
     def get_book_detail(self, book, *args, **kwargs):

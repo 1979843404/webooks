@@ -122,12 +122,11 @@ class ZhangBookSpider(BookSpiderInterface):
                 cleaned_name = name
             return cleaned_name
 
-        def parse_number(chapter_url, page=1, base=15):
+        def parse_number(chapter_url):
             try:
                 number = int(number_regex.search(chapter_url).group(1))
             except:
                 number = 0
-            number += (page-1)*base
             return number
 
         def parse_page_list(url, page=1, cache=True):
@@ -142,7 +141,7 @@ class ZhangBookSpider(BookSpiderInterface):
                     name = tag_a.text
                     cleaned_name = parse_name(name)
                     chapter_url = "http://zhangbook.com/book/%s" %href
-                    number = parse_number(href, page)
+                    number = parse_number(chapter_url)
                     info = {
                         "title": cleaned_name,
                         "number": number,
