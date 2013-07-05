@@ -10,6 +10,7 @@ urlpatterns = patterns('',
     # url(r'^webooks/', include('webooks.foo.urls')),
 
     url(r'^', include("webooks.urls.urls")),
+    url(r'^grappelli/', include('grappelli.urls')),
     url(r'^api/v0/', include("webooks.apis.urls")),
     url(r'^internal/', include("webooks.privates.urls")),
     url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
