@@ -3,9 +3,11 @@
 
 from __future__ import division, unicode_literals, print_function
 from django.http import HttpResponse
+from django.views.decorators.csrf import csrf_exempt
 from webooks.utils.https import json_response
 from weixin import WeiXin
 
+@csrf_exempt
 def interface(request):
     if request.method == 'GET':
         echostr = request.GET.get("echostr", "")
