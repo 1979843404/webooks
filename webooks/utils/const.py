@@ -40,3 +40,6 @@ DATE_FORMAT = "%Y-%m-%d"
 TIME_FORMAT = "%H:%M:%S"
 STRATEGY_TIME_FORMAT = "%H:%M"
 DATETIME_FORMAT = "%s %s" %(DATE_FORMAT, TIME_FORMAT)
+
+# REDIS
+USER_STATE = lambda key: "USER:STATE:%s" %key

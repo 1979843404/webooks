@@ -2,6 +2,8 @@
 # __author__ = chenchiyuan
 
 from __future__ import division, unicode_literals, print_function
+from webooks.utils.cache import cache
+from webooks.utils.const import USER_STATE
 
 WX_INDEX = "index"
 WX_SEARCH_BOOKS = "search_books"
@@ -77,6 +79,26 @@ class StateManager(object):
         WX_SEARCH_BOOKS: StateSearchBooks,
         WX_BOOK_DETAIL: StateBookDetail
     }
+
+    @classmethod
+    def get_user_state(cls, user_key):
+        info = cache.get(USER_STATE(user_key))
+        if not info:
+            return cls.get_state()
+        else:
+            return cls.get_state(**info)
+
+    @classmethod
+    def set_user_state(cls, user_key, state="index", meta={}):
+        info = {
+            "state": state,
+            "meta": meta,
+        }
+        return cache.set(USER_STATE(user_key), info)
+
+    @classmethod
+    def clear_user_state(cls, user_key):
+        return cache.delete(USER_STATE(user_key))
 
     @classmethod
     def get_state(cls, state="index", meta={}):

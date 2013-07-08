@@ -200,3 +200,14 @@ SENTRY_DSN = config.get("sentry", "dsn")
 
 # SPIDER CONFIG
 SPIDER_BASE_DIR = config.get("spider", "base_dir")
+
+# REDIS CONFIG
+CACHES = {
+    "default": {
+        "BACKEND": "redis_cache.cache.RedisCache",
+        "LOCATION": config.get("redis", "location"),
+        "OPTIONS": {
+            "CLIENT_CLASS": "redis_cache.client.DefaultClient",
+            }
+    }
+}
