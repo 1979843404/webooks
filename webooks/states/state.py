@@ -4,6 +4,7 @@
 from __future__ import division, unicode_literals, print_function
 from webooks.utils.cache import cache
 from webooks.utils.const import USER_STATE
+from webooks.models import Book
 
 WX_INDEX = "index"
 WX_SEARCH_BOOKS = "search_books"
@@ -18,7 +19,7 @@ class StateInterface(object):
         return cls(meta={})
 
     def show(self):
-        print(self.meta.get("content", ""))
+        return self.meta.get("content", "")
 
     def handle(self, content):
         # 根据输入参数返回下一个状态和元数据
@@ -28,20 +29,20 @@ class StateIndex(StateInterface):
     @classmethod
     def initial(cls):
         return cls(meta={
-            "content": u"首页\n1.搜索\n0.回到首页"
+            "content": u"欢迎使用 你的小说 您可以:\n1.搜索\n0.回到首页"
         })
 
     def handle(self, content):
         if content == "1":
-            return WX_SEARCH_BOOKS, {"content": u"进入搜索页"}
+            return WX_SEARCH_BOOKS, {"content": u"进入搜索页, 您可以输入书名进行搜索"}
         else:
-            return WX_INDEX, {"content": "继续"}
+            return WX_INDEX, {"content": u"欢迎使用 你的小说 您可以:\n1.搜索\n0.回到首页"}
 
 class StateSearchBooks(StateInterface):
     @classmethod
     def initial(cls):
         return cls(meta={
-            "content": u"进入搜索页",
+            "content": u"进入搜索页, 您可以输入书名进行搜索",
             "books": {}
         })
 
@@ -49,29 +50,38 @@ class StateSearchBooks(StateInterface):
         books = self.meta.get("books", {})
         if books:
             lines = ["%s:%s" %(book[0], book[1]) for book in books.items()]
-            print("\n".join(lines))
+            return "您可以输入数字选择对应的书籍\n" + "\n".join(lines)
         else:
-            print(self.meta.get("content", ""))
+            return self.meta.get("content", "")
 
     def get_book(self, index):
-        return self.meta["books"].get(index, "")
+        return self.meta.get("books", {}).get(index, "")
 
     def handle(self, content):
         if content == "0":
-            return WX_INDEX, {"content": u"回到首页"}
-        elif content == "1":
-            return WX_BOOK_DETAIL, {"content": u"进入%s详情页" % self.meta.get("book", ""), "book": self.get_book(content)}
+            return WX_INDEX, {"content": u"欢迎使用 你的小说 您可以:\n1.搜索\n0.回到首页"}
+
+        book = self.get_book(content)
+        if book:
+            return WX_BOOK_DETAIL, {"content": u"进入%s详情页,功能还在做" % self.meta.get("book", ""), "book": self.get_book(content)}
         else:
-            return WX_SEARCH_BOOKS, {"content": u"继续搜索", "books": {"1": content}}
+            search_books = Book.objects.all().filter(name__icontains=content).values_list("name")
+            books = {}
+            if not search_books.count():
+                return WX_SEARCH_BOOKS, {"content": u"没有结果，请缩小范围", "books": {}}
+            else:
+                for i, item in enumerate(search_books, start=1):
+                    books[str(i)] = item[0]
+                return WX_SEARCH_BOOKS, {"content": u"继续搜索", "books": books}
 
 class StateBookDetail(StateInterface):
     def handle(self, content):
         if content == "0":
             return WX_INDEX, {"content": u"回到首页"}
         elif content == "1":
-            return WX_SEARCH_BOOKS, {"content", u"进入搜索页"}
-        else:
             return WX_BOOK_DETAIL, {"content", u"展示%s章节列表" %self.meta.get("book", "")}
+        else:
+            return WX_SEARCH_BOOKS, {}
 
 class StateManager(object):
     mapping = {

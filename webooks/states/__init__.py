@@ -14,7 +14,7 @@ class State(object):
         self.set_state(new_state_index, meta=result)
 
     def show(self):
-        self.state.show()
+        return self.state.show()
 
     def set_state(self, state="index", meta={}):
         self.state = StateManager.get_state(state, meta)
