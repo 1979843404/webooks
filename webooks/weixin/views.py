@@ -21,7 +21,7 @@ def interface(request):
         content = json_data.get("Content", "")
         books = Book.objects.all().filter(name__icontains=content).values_list('name')
         book_contents = [book[0] for book in books]
-        book_content = "<br>".join(book_contents)
+        book_content = "\n".join(book_contents)
         to_user_name = json_data.get("FromUserName", "")
         from_user_name = json_data.get("ToUserName", "")
         create_time = time.time()
