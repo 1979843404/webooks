@@ -10,7 +10,6 @@ import time
 
 @csrf_exempt
 def interface(request):
-    print(request)
     if request.method == 'GET':
         echostr = request.GET.get("echostr", "")
         return HttpResponse(echostr)
