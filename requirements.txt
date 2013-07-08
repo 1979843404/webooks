@@ -11,3 +11,4 @@ django-filter
 pygments
 gunicorn
 raven
+django-grappelli
