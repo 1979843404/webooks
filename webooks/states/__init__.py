@@ -10,10 +10,10 @@ class State(object):
 
     def handle(self, content):
         new_state_index, result = self.state.handle(content)
-        self.set_state(new_state_index, result)
+        self.set_state(new_state_index, meta=result)
 
     def show(self):
-        print(self.state.meta.get("content", ""))
+        self.state.show()
 
     def set_state(self, state="index", meta={}):
         self.state = StateManager.get_state(state, meta)
