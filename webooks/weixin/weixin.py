@@ -92,7 +92,7 @@ class WeiXin(object):
         create_time = time.time()
         article_count = len(articles)
         xml = '<xml>'
-        xml += '<ToUserName>%s<ToUserName>' %self._cdata(to_user_name)
+        xml += '<ToUserName>%s</ToUserName>' %self._cdata(to_user_name)
         xml += '<FromUserName>%s</FromUserName>' %self._cdata(from_user_name)
         xml += '<CreateTime>%d</CreateTime>' %create_time
         xml += '<MsgType>%s</MsgType>' %self._cdata(msg_type)
