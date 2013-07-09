@@ -23,5 +23,4 @@ def interface(request):
         state = State(from_user_name, to_user_name)
         state.handle(content)
         xml_data = state.to_xml()
-        print(xml_data)
         return HttpResponse(xml_data)

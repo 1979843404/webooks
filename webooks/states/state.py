@@ -25,7 +25,7 @@ class StateInterface(object):
         content = self.meta.get("content", "")
         return self._to_wx_text(content)
 
-    def _to_wx_text(self, content):
+    def _to_wx_text(self, content=""):
         wx = WeiXin()
         xml = wx.to_text(from_user_name=self.from_user_name, to_user_name=self.to_user_name, content=content)
         return xml
