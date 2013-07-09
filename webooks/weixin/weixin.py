@@ -95,7 +95,7 @@ class WeiXin(object):
         xml += '<ToUserName>%s<ToUserName>' %self._cdata(to_user_name)
         xml += '<FromUserName>%s</FromUserName>' %self._cdata(from_user_name)
         xml += '<CreateTime>%d</CreateTime>' %create_time
-        xml += '<MsgType>%s</MsgType' %self._cdata(msg_type)
+        xml += '<MsgType>%s</MsgType>' %self._cdata(msg_type)
         xml += '<ArticleCount>%d</ArticleCount>' %article_count
         xml += '<Articles>'
         for item in articles:
