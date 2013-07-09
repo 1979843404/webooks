@@ -20,7 +20,7 @@ def interface(request):
         content = json_data.get("Content", "")
         from_user_name = json_data.get("FromUserName", "")
         to_user_name = json_data.get("ToUserName", "")
-        state = State(from_user_name, to_user_name)
+        state = State(to_user_name=from_user_name, from_user_name=to_user_name)
         state.handle(content)
         xml_data = state.to_xml()
         return HttpResponse(xml_data)
