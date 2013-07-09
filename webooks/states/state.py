@@ -7,6 +7,8 @@ from webooks.utils.const import USER_STATE
 from webooks.models import Book
 from webooks.weixin.weixin import WeiXin
 
+import json
+
 WX_INDEX = "index"
 WX_SEARCH_BOOKS = "search_books"
 WX_BOOK_DETAIL = "book_detail"
@@ -28,6 +30,12 @@ class StateInterface(object):
     def _to_wx_text(self, content=""):
         wx = WeiXin()
         xml = wx.to_text(from_user_name=self.from_user_name, to_user_name=self.to_user_name, content=content)
+        return xml
+
+    def _to_full_text(self, articles):
+        wx = WeiXin()
+        xml = wx.to_pic_text(from_user_name=self.from_user_name, to_user_name=self.to_user_name,
+            articles=articles)
         return xml
 
     def handle(self, content):
@@ -58,14 +66,14 @@ class StateSearchBooks(StateInterface):
     def to_xml(self):
         books = self.meta.get("books", {})
         if books:
-            lines = ["%s:%s" %(book[0], book[1]) for book in books.items()]
+            lines = ["%s:%s 作者:%s" %(index, book.get("name", ""), book.get("author", "")) for index, book in books.items()]
             content = "您可以输入数字选择对应的书籍\n" + "\n".join(lines)
         else:
             content = self.meta.get("content", "")
         return self._to_wx_text(content)
 
     def get_book(self, index):
-        return self.meta.get("books", {}).get(index, "")
+        return self.meta.get("books", {}).get(index, {})
 
     def handle(self, content):
         if content == "0":
@@ -73,23 +81,48 @@ class StateSearchBooks(StateInterface):
 
         book = self.get_book(content)
         if book:
-            return WX_BOOK_DETAIL, {"content": u"进入%s详情页,功能还在做" % self.meta.get("book", ""), "book": self.get_book(content)}
+            return WX_BOOK_DETAIL, {
+                "content": u"进入%s详情页" % self.meta.get("book", ""),
+                "book": book
+            }
         else:
-            search_books = Book.objects.all().filter(name__icontains=content).values_list("name")
+            search_books = Book.objects.all().filter(name__icontains=content)
             books = {}
             if not search_books.count():
                 return WX_SEARCH_BOOKS, {"content": u"没有结果，请缩小范围", "books": {}}
             else:
                 for i, item in enumerate(search_books, start=1):
-                    books[str(i)] = item[0]
+                    books[str(i)] = {
+                        "id": item.id,
+                        "name": item.name,
+                        "author": item.author
+                    }
                 return WX_SEARCH_BOOKS, {"content": u"继续搜索", "books": books}
 
 class StateBookDetail(StateInterface):
+    def to_xml(self):
+        book = self.meta.get("book", "")
+        if book:
+            item = Book.objects.get(id=book["id"])
+            articles = [
+                {
+                    "title": u"这是标题: %s" % item.name,
+                    "description": u"这是描述: %s" %item.description,
+                    "picurl": "http://cayman.b0.upaiyun.com/71509cef7a4940aea89fa6d512be8715.jpeg!medium",
+                    "url": "http://www.baidu.com",
+                }
+            ]
+            return self._to_full_text(articles)
+        else:
+            return self._to_wx_text(self.meta.get("content", ""))
+
     def handle(self, content):
         if content == "0":
             return WX_INDEX, {"content": u"回到首页"}
         elif content == "1":
-            return WX_BOOK_DETAIL, {"content", u"展示%s章节列表" %self.meta.get("book", "")}
+            return WX_BOOK_DETAIL, {
+                "content": u"展示%s章节列表" %self.meta.get("book", {}).get("name", ""), "book": self.meta.get("book", "")
+            }
         else:
             return WX_SEARCH_BOOKS, {}
 
