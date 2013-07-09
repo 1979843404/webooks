@@ -20,14 +20,7 @@ def interface(request):
         content = json_data.get("Content", "")
         from_user_name = json_data.get("FromUserName", "")
         to_user_name = json_data.get("ToUserName", "")
-        state = State(from_user_name)
-
-        create_time = time.time()
-        msg_type = "text"
+        state = State(from_user_name, to_user_name)
         state.handle(content)
-        content = state.show()
-        func_flag = 0
-        xml_data = wx.to_xml(to_user_name=from_user_name, from_user_name=to_user_name, create_time=create_time,
-            msg_type=msg_type, content=content, func_flag=func_flag)
-
+        xml_data = state.to_xml()
         return HttpResponse(xml_data)

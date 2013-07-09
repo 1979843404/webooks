@@ -5,21 +5,30 @@ from __future__ import division, unicode_literals, print_function
 from webooks.utils.cache import cache
 from webooks.utils.const import USER_STATE
 from webooks.models import Book
+from webooks.weixin.weixin import WeiXin
 
 WX_INDEX = "index"
 WX_SEARCH_BOOKS = "search_books"
 WX_BOOK_DETAIL = "book_detail"
 
 class StateInterface(object):
-    def __init__(self, meta={}):
+    def __init__(self, from_user_name, to_user_name, meta={}):
+        self.from_user_name = from_user_name
+        self.to_user_name = to_user_name
         self.meta = meta
 
     @classmethod
-    def initial(cls):
-        return cls(meta={})
+    def initial(cls, from_user_name, to_user_name):
+        return cls(from_user_name, to_user_name, meta={})
 
-    def show(self):
-        return self.meta.get("content", "")
+    def to_xml(self):
+        content = self.meta.get("content", "")
+        return self._to_wx_text(content)
+
+    def _to_wx_text(self, content):
+        wx = WeiXin()
+        xml = wx.to_text(from_user_name=self.from_user_name, to_user_name=self.to_user_name, content=content)
+        return xml
 
     def handle(self, content):
         # 根据输入参数返回下一个状态和元数据
@@ -27,8 +36,8 @@ class StateInterface(object):
 
 class StateIndex(StateInterface):
     @classmethod
-    def initial(cls):
-        return cls(meta={
+    def initial(cls, from_user_name, to_user_name):
+        return cls(from_user_name, to_user_name, meta={
             "content": u"欢迎使用 你的小说 您可以:\n1.搜索\n0.回到首页"
         })
 
@@ -40,19 +49,20 @@ class StateIndex(StateInterface):
 
 class StateSearchBooks(StateInterface):
     @classmethod
-    def initial(cls):
-        return cls(meta={
+    def initial(cls, from_user_name, to_user_name):
+        return cls(from_user_name, to_user_name, meta={
             "content": u"进入搜索页, 您可以输入书名进行搜索",
             "books": {}
         })
 
-    def show(self):
+    def to_xml(self):
         books = self.meta.get("books", {})
         if books:
             lines = ["%s:%s" %(book[0], book[1]) for book in books.items()]
-            return "您可以输入数字选择对应的书籍\n" + "\n".join(lines)
+            content = "您可以输入数字选择对应的书籍\n" + "\n".join(lines)
         else:
-            return self.meta.get("content", "")
+            content = self.meta.get("content", "")
+        return self._to_wx_text(content)
 
     def get_book(self, index):
         return self.meta.get("books", {}).get(index, "")
@@ -91,29 +101,29 @@ class StateManager(object):
     }
 
     @classmethod
-    def get_user_state(cls, user_key):
-        info = cache.get(USER_STATE(user_key))
+    def get_user_state(cls, from_user_name, to_user_name):
+        info = cache.get(USER_STATE(to_user_name))
         if not info:
-            return cls.get_state()
+            return cls.get_state(from_user_name, to_user_name)
         else:
-            return cls.get_state(**info)
+            return cls.get_state(from_user_name, to_user_name, **info)
 
     @classmethod
-    def set_user_state(cls, user_key, state="index", meta={}):
+    def set_user_state(cls, to_user_name, state="index", meta={}):
         info = {
             "state": state,
             "meta": meta,
         }
-        return cache.set(USER_STATE(user_key), info)
+        return cache.set(USER_STATE(to_user_name), info)
 
     @classmethod
-    def clear_user_state(cls, user_key):
-        return cache.delete(USER_STATE(user_key))
+    def clear_user_state(cls, to_user_name):
+        return cache.delete(USER_STATE(to_user_name))
 
     @classmethod
-    def get_state(cls, state="index", meta={}):
+    def get_state(cls, from_user_name, to_user_name, state="index", meta={}):
         cls_name = cls.mapping.get(state, StateIndex)
         if not meta:
-            return cls_name.initial()
+            return cls_name.initial(from_user_name, to_user_name)
         else:
-            return cls_name(meta)
+            return cls_name(from_user_name, to_user_name, meta)

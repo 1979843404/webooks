@@ -1,7 +1,10 @@
-# -*- coding: utf8
-# Author: twinsant@gmail.com
+# -*- coding: utf-8 -*-
+# __author__ = chenchiyuan
+
+from __future__ import division, unicode_literals, print_function
 import hashlib
 import xml.etree.ElementTree as ET
+import time
 
 class WeiXin(object):
     def __init__(self, token=None, timestamp=None, nonce=None, signature=None, echostr=None, xml_body=None):
@@ -50,7 +53,11 @@ class WeiXin(object):
             return '<![CDATA[%s]]>' % data.replace(']]>', ']]]]><![CDATA[>')
         return data
 
-    def to_xml(self, **kwargs):
+    def to_text(self, **kwargs):
+        kwargs['create_time'] = time.time()
+        kwargs['msg_type'] = "text"
+        kwargs['func_flag'] = "0"
+
         xml = '<xml>'
         def cmp(x, y):
             ''' WeiXin need ordered elements?
@@ -70,6 +77,38 @@ class WeiXin(object):
             tag = self._to_tag(k)
             xml += '<%s>%s</%s>' % (tag, self._cdata(v), tag)
         xml += '</xml>'
+        return xml
+
+    def to_pic_text(self, to_user_name, from_user_name, articles, msg_type="news"):
+        """
+            articles = [
+                {
+                    title,
+                    description,
+                    picurl,
+                    url
+                }
+            ]
+        """
+        create_time = time.time()
+        article_count = len(articles)
+        xml = '<xml>'
+        xml += '<ToUserName>%s<ToUserName>' %self._cdata(to_user_name)
+        xml += '<FromUserName>%s</FromUserName>' %self._cdata(from_user_name)
+        xml += '<CreateTime>%d</CreateTime>' %create_time
+        xml += '<MsgType>%s</MsgType' %self._cdata(msg_type)
+        xml += '<ArticleCount>%d</ArticleCount>' %article_count
+        xml += '<Articles>'
+        for item in articles:
+            title = item.get("title", "")
+            description = item.get("description", "")
+            picurl = item.get("picurl", "")
+            url = item.get("url", "")
+            data = "<item><Title>%s</Title><Description>%s</Description><PicUrl>%s</PicUrl><Url>%s</Url></item>" \
+                   %(self._cdata(title), self._cdata(description), self._cdata(picurl), self._cdata(url))
+            xml += data
+        xml += '</Articles>'
+        xml += '<FuncFlag>1</FuncFlag></xml>'
         return xml
 
     def validate(self):
@@ -100,151 +139,3 @@ class WeiXin(object):
         a = sorted([v for k, v in params.items()])
         s = ''.join(a)
         return hashlib.sha1(s).hexdigest()
-
-import unittest
-class WeiXinTestCase(unittest.TestCase):
-    def test_on_connect_validate(self):
-        weixin = WeiXin.on_connect(token='token',
-            timestamp='timestamp',
-            nonce='nonce',
-            signature='6db4861c77e0633e0105672fcd41c9fc2766e26e',
-            echostr='echostr')
-        self.assertEqual(weixin.validate(), True)
-
-    def test_on_connect_validate_false(self):
-        weixin = WeiXin.on_connect(token='token',
-            timestamp='timestamp',
-            nonce='nonce_false',
-            signature='6db4861c77e0633e0105672fcd41c9fc2766e26e',
-            echostr='echostr')
-        self.assertEqual(weixin.validate(), False)
-
-    def test_on_message_text(self):
-        body = '''
-        <xml>
-            <ToUserName><![CDATA[toUser]]></ToUserName>
-            <FromUserName><![CDATA[fromUser]]></FromUserName> 
-            <CreateTime>1348831860</CreateTime>
-            <MsgType><![CDATA[text]]></MsgType>
-            <Content><![CDATA[this is a test]]></Content>
-            <MsgId>1234567890123456</MsgId>
-       </xml>
-        '''
-        weixin = WeiXin.on_message(body)
-        j = weixin.to_json()
-        def assertParam(name, value):
-            self.assertEqual(name in j, True)
-            self.assertEqual(j[name], value)
-        assertParam('ToUserName', 'toUser')
-        assertParam('FromUserName', 'fromUser')
-        assertParam('CreateTime', 1348831860)
-        assertParam('MsgType', 'text')
-        assertParam('Content', 'this is a test')
-        assertParam('MsgId', '1234567890123456')
-
-    def test_on_message_image(self):
-        body = '''
-        <xml>
-        <ToUserName><![CDATA[toUser]]></ToUserName>
-        <FromUserName><![CDATA[fromUser]]></FromUserName>
-        <CreateTime>1348831860</CreateTime>
-        <MsgType><![CDATA[image]]></MsgType>
-        <PicUrl><![CDATA[this is a url]]></PicUrl>
-        <MsgId>1234567890123456</MsgId>
-        </xml>
-        '''
-        weixin = WeiXin.on_message(body)
-        j = weixin.to_json()
-        def assertParam(name, value):
-            self.assertEqual(name in j, True)
-            self.assertEqual(j[name], value)
-        assertParam('ToUserName', 'toUser')
-        assertParam('FromUserName', 'fromUser')
-        assertParam('CreateTime', 1348831860)
-        assertParam('MsgType', 'image')
-        assertParam('PicUrl', 'this is a url')
-        assertParam('MsgId', '1234567890123456')
-
-    def test_on_message_location(self):
-        body = '''
-        <xml>
-        <ToUserName><![CDATA[toUser]]></ToUserName>
-        <FromUserName><![CDATA[fromUser]]></FromUserName>
-        <CreateTime>1351776360</CreateTime>
-        <MsgType><![CDATA[location]]></MsgType>
-        <Location_X>23.134521</Location_X>
-        <Location_Y>113.358803</Location_Y>
-        <Scale>20</Scale>
-        <Label><![CDATA[位置信息]]></Label>
-        <MsgId>1234567890123456</MsgId>
-        </xml> 
-        '''
-        weixin = WeiXin.on_message(body)
-        j = weixin.to_json()
-        def assertParam(name, value):
-            self.assertEqual(name in j, True)
-            self.assertEqual(j[name], value)
-        assertParam('ToUserName', 'toUser')
-        assertParam('FromUserName', 'fromUser')
-        assertParam('CreateTime', 1351776360)
-        assertParam('MsgType', 'location')
-        assertParam('Location_X', '23.134521')
-        assertParam('Location_Y', '113.358803')
-        assertParam('Scale', '20')
-        assertParam('Label', u'位置信息')
-        assertParam('MsgId', '1234567890123456')
-
-    def test_on_message_link(self):
-        body = '''
-        <xml>
-        <ToUserName><![CDATA[toUser]]></ToUserName>
-        <FromUserName><![CDATA[fromUser]]></FromUserName>
-        <CreateTime>1351776360</CreateTime>
-        <MsgType><![CDATA[link]]></MsgType>
-        <Title><![CDATA[公众平台官网链接]]></Title>
-        <Description><![CDATA[公众平台官网链接]]></Description>
-        <Url><![CDATA[url]]></Url>
-        <MsgId>1234567890123456</MsgId>
-        </xml>
-        '''
-        weixin = WeiXin.on_message(body)
-        j = weixin.to_json()
-        def assertParam(name, value):
-            self.assertEqual(name in j, True)
-            self.assertEqual(j[name], value)
-        assertParam('ToUserName', 'toUser')
-        assertParam('FromUserName', 'fromUser')
-        assertParam('CreateTime', 1351776360)
-        assertParam('MsgType', 'link')
-        assertParam('Title', u'公众平台官网链接')
-        assertParam('Description', u'公众平台官网链接')
-        assertParam('Url', 'url')
-        assertParam('MsgId', '1234567890123456')
-
-    def test_to_xml_text(self):
-        xml = '''
-        <xml>
-        <ToUserName><![CDATA[toUser]]></ToUserName>
-        <FromUserName><![CDATA[fromUser]]></FromUserName>
-        <CreateTime>12345678</CreateTime>
-        <MsgType><![CDATA[text]]></MsgType>
-        <Content><![CDATA[content]]></Content>
-        <FuncFlag>0</FuncFlag>
-        </xml>
-        '''
-        weixin = WeiXin()
-        to_user_name = 'toUser'
-        from_user_name = 'fromUser'
-        create_time = 12345678
-        msg_type = 'text'
-        content = 'content'
-        func_flag = 0
-        self.assertEqual(xml.replace('\n', '').replace(' ', '').strip(), weixin.to_xml(to_user_name=to_user_name,
-            from_user_name=from_user_name,
-            create_time=create_time,
-            msg_type=msg_type,
-            content=content,
-            func_flag=func_flag))
-
-if __name__ == '__main__':
-    unittest.main()
