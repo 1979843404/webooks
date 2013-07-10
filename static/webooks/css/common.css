@@ -1,0 +1,35 @@
+.clearfix:after{
+    content: ".";
+    display: block;
+    height: 0;
+    clear: both;
+    visibility: hidden;
+}
+
+
+
+h2{
+    font-size: 22px;
+}
+
+h3{
+    font-size:18px;
+}
+
+
+
+
+body{
+    background-color: #f5f5f5;
+    font-family: "Microsoft Yahei",'微软雅黑','宋体',"Helvetica Neue",Helvetica,Arial,sans-serif;
+    font-size: 13px;
+}
+
+a:hover{
+    color: #0a8cd2;
+    text-decoration: underline;
+}
+
+a{
+    color: #0a8cd2;
+}

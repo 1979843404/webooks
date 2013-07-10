@@ -1,0 +1,43 @@
+.container{
+    width: 800px;
+    margin: 0 auto;
+}
+
+.info-container{
+    margin-top: 10px;
+    padding: 2px;
+    font-size: 16px;
+}
+
+.info-container img{
+    float: left;
+}
+
+.info-container ul{
+    float: left;
+    margin-left: 16px;
+    mariin-top: 4px;
+}
+
+.info-container li{
+    height: 18px;
+    line-height: 18px;
+    padding: 2px;
+}
+
+h2{
+    padding-top: 4px;
+}
+
+h3{
+    padding: 6px 0;
+    border-bottom: 1px dashed black;
+}
+
+.details{
+    margin-top: 6px;
+    font-size: 16px;
+    line-height: 22px;
+    letter-spacing: 0.05em;
+    text-indent: 2em;
+}
