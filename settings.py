@@ -7,6 +7,8 @@ PROJECT_HOME = os.path.dirname(os.path.realpath(__file__))
 DEBUG = config.getboolean("django", "debug")
 TEMPLATE_DEBUG = config.getboolean("django", "template_dubug")
 
+DOMAIN = config.get("django", "domain")
+
 ADMINS = (
     # ('Your Name', 'your_email@example.com'),
 )

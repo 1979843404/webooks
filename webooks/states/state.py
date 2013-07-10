@@ -106,10 +106,10 @@ class StateBookDetail(StateInterface):
             item = Book.objects.get(id=book["id"])
             articles = [
                 {
-                    "title": u"这是标题: %s" % item.name,
-                    "description": u"这是描述: %s" %item.description,
+                    "title": u"%s" % item.name,
+                    "description": u"%s" %item.description,
                     "picurl": "http://cayman.b0.upaiyun.com/71509cef7a4940aea89fa6d512be8715.jpeg!medium",
-                    "url": "http://www.baidu.com",
+                    "url": item.absolute_url,
                 }
             ]
             return self._to_full_text(articles)

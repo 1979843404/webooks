@@ -9,6 +9,7 @@ from webooks.utils import const
 from webooks.models.tags import Tag
 from webooks.models.mixins import GetByUniqueMixin
 from webooks.models.strategy import Strategy
+from django.conf import settings
 
 class Book(models.Model, GetByUniqueMixin):
     class Meta:
@@ -42,7 +43,7 @@ class Book(models.Model, GetByUniqueMixin):
 
     @property
     def absolute_url(self):
-        return self.get_absolute_url
+        return settings.DOMAIN + self.get_absolute_url()
 
     @classmethod
     def get_or_create(cls, name, **kwargs):
