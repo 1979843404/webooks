@@ -6,12 +6,12 @@ from webooks.utils.cache import cache
 from webooks.utils.const import USER_STATE
 from webooks.models import Book
 from webooks.weixin.weixin import WeiXin
-
-import json
+from collections import OrderedDict
 
 WX_INDEX = "index"
 WX_SEARCH_BOOKS = "search_books"
 WX_BOOK_DETAIL = "book_detail"
+WX_SEARCH_AUTHORS ="search_authors"
 
 class StateInterface(object):
     def __init__(self, from_user_name, to_user_name, meta={}):
@@ -46,14 +46,63 @@ class StateIndex(StateInterface):
     @classmethod
     def initial(cls, from_user_name, to_user_name):
         return cls(from_user_name, to_user_name, meta={
-            "content": u"欢迎使用 你的小说 您可以:\n1.搜索\n0.回到首页"
+            "content": u"欢迎使用 你的小说 您可以:\n1.搜书名\n2.搜作者\n0.回到首页"
         })
 
     def handle(self, content):
         if content == "1":
-            return WX_SEARCH_BOOKS, {"content": u"进入搜索页, 您可以输入书名进行搜索"}
+            return WX_SEARCH_BOOKS, {}
+        elif content == "2":
+            return WX_SEARCH_AUTHORS, {}
+        elif content == "3":
+            return WX_INDEX, {}
         else:
-            return WX_INDEX, {"content": u"欢迎使用 你的小说 您可以:\n1.搜索\n0.回到首页"}
+            return WX_INDEX, {}
+
+class StateSearchAuthors(StateInterface):
+    @classmethod
+    def initial(cls, from_user_name, to_user_name):
+        return cls(from_user_name, to_user_name, meta={
+            "content": u"进入搜索页, 您可以输入作者名进行搜索",
+            "books": {}
+        })
+
+    def get_book(self, index):
+        return self.meta.get("books", {}).get(index, {})
+
+    def to_xml(self):
+        books = self.meta.get("books", {})
+        if books:
+            lines = ["%s:%s 作者:%s" %(index, book.get("name", ""), book.get("author", "")) for index, book in books.items()]
+            content = "您可以输入数字选择对应的书籍\n" + "\n".join(lines)
+            content += "\n0:回到首页"
+        else:
+            content = self.meta.get("content", "")
+        return self._to_wx_text(content)
+
+    def handle(self, content):
+        if content == "0":
+            return WX_INDEX, {}
+
+        book = self.get_book(content)
+        if book:
+            return WX_BOOK_DETAIL, {
+                "content": u"进入%s详情页" % self.meta.get("book", ""),
+                "book": book
+            }
+        else:
+            search_books = Book.objects.all().filter(author=content)
+            books = OrderedDict()
+            if not search_books.count():
+                return WX_SEARCH_BOOKS, {"content": u"没有结果，请缩小范围", "books": {}}
+            else:
+                for i, item in enumerate(search_books, start=1):
+                    books[str(i)] = {
+                        "id": item.id,
+                        "name": item.name,
+                        "author": item.author
+                    }
+                return WX_SEARCH_BOOKS, {"content": u"继续搜索", "books": books}
 
 class StateSearchBooks(StateInterface):
     @classmethod
@@ -68,6 +117,7 @@ class StateSearchBooks(StateInterface):
         if books:
             lines = ["%s:%s 作者:%s" %(index, book.get("name", ""), book.get("author", "")) for index, book in books.items()]
             content = "您可以输入数字选择对应的书籍\n" + "\n".join(lines)
+            content += "\n0:回到首页"
         else:
             content = self.meta.get("content", "")
         return self._to_wx_text(content)
@@ -77,7 +127,7 @@ class StateSearchBooks(StateInterface):
 
     def handle(self, content):
         if content == "0":
-            return WX_INDEX, {"content": u"欢迎使用 你的小说 您可以:\n1.搜索\n0.回到首页"}
+            return WX_INDEX, {}
 
         book = self.get_book(content)
         if book:
@@ -87,7 +137,7 @@ class StateSearchBooks(StateInterface):
             }
         else:
             search_books = Book.objects.all().filter(name__icontains=content)
-            books = {}
+            books = OrderedDict()
             if not search_books.count():
                 return WX_SEARCH_BOOKS, {"content": u"没有结果，请缩小范围", "books": {}}
             else:
@@ -130,7 +180,8 @@ class StateManager(object):
     mapping = {
         WX_INDEX: StateIndex,
         WX_SEARCH_BOOKS: StateSearchBooks,
-        WX_BOOK_DETAIL: StateBookDetail
+        WX_BOOK_DETAIL: StateBookDetail,
+        WX_SEARCH_AUTHORS: StateSearchAuthors
     }
 
     @classmethod
