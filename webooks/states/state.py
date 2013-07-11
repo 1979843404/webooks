@@ -8,6 +8,9 @@ from webooks.models import Book
 from webooks.weixin.weixin import WeiXin
 from collections import OrderedDict
 
+SMILE = u"/::)"
+ANGRY = u"/::@"
+
 WX_INDEX = "index"
 WX_SEARCH_BOOKS = "search_books"
 WX_BOOK_DETAIL = "book_detail"
@@ -94,7 +97,7 @@ class StateSearchAuthors(StateInterface):
             search_books = Book.objects.all().filter(author=content)
             books = OrderedDict()
             if not search_books.count():
-                return WX_SEARCH_BOOKS, {"content": u"没有结果，请缩小范围", "books": {}}
+                return WX_SEARCH_AUTHORS, {"content": u"没有结果，请缩小范围", "books": {}}
             else:
                 for i, item in enumerate(search_books, start=1):
                     books[str(i)] = {
@@ -102,7 +105,7 @@ class StateSearchAuthors(StateInterface):
                         "name": item.name,
                         "author": item.author
                     }
-                return WX_SEARCH_BOOKS, {"content": u"继续搜索", "books": books}
+                return WX_SEARCH_AUTHORS, {"content": u"继续搜索", "books": books}
 
 class StateSearchBooks(StateInterface):
     @classmethod
@@ -172,6 +175,10 @@ class StateBookDetail(StateInterface):
         elif content == "1":
             return WX_BOOK_DETAIL, {
                 "content": u"展示%s章节列表" %self.meta.get("book", {}).get("name", ""), "book": self.meta.get("book", "")
+            }
+        elif content == SMILE:
+            return WX_BOOK_DETAIL, {
+                "content": u"收藏成功", "book": self.meta.get("book", "")
             }
         else:
             return WX_SEARCH_BOOKS, {}
