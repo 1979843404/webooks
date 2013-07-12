@@ -8,7 +8,7 @@ from webooks.utils import const
 from webooks.views.books import BookDetailView
 
 urlpatterns = patterns('',
-    url(r'books/%s/' %const.URL_ID, BookDetailView.as_view(),name="book_detail"),
+    url(r'^books/%s/' %const.URL_ID, BookDetailView.as_view(),name="book_detail"),
 )
 
 urlpatterns = format_suffix_patterns(urlpatterns)

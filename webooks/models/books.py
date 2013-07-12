@@ -41,9 +41,17 @@ class Book(models.Model, GetByUniqueMixin):
     def get_absolute_url(self):
         return ('book_detail', [self.id, ])
 
+    @permalink
+    def get_api_url(self):
+        return ('api_book_detail', [self.id, ])
+
     @property
     def absolute_url(self):
         return settings.DOMAIN + self.get_absolute_url()
+
+    @property
+    def api_url(self):
+        return self.get_api_url()
 
     @classmethod
     def get_or_create(cls, name, **kwargs):
@@ -119,8 +127,8 @@ class Chapter(models.Model, GetByUniqueMixin):
         return self.content
 
     @permalink
-    def get_absolute_url(self):
-        return ('chapter_detail', [str(self.book_id), str(self.id)])
+    def get_api_url(self):
+        return ('api_chapter_detail', [str(self.book_id), str(self.id)])
 
     @property
     def before(self):
@@ -132,7 +140,7 @@ class Chapter(models.Model, GetByUniqueMixin):
         if not chapter:
             return ""
         else:
-            return chapter.get_absolute_url()
+            return chapter.get_api_url()
 
     @property
     def after(self):
@@ -144,7 +152,7 @@ class Chapter(models.Model, GetByUniqueMixin):
         if not chapter:
             return ""
         else:
-            return chapter.get_absolute_url()
+            return chapter.get_api_url()
 
     @classmethod
     def get_or_create(cls, book, number, **kwargs):
