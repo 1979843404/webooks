@@ -9,6 +9,10 @@ TEMPLATE_DEBUG = config.getboolean("django", "template_dubug")
 
 DOMAIN = config.get("django", "domain")
 
+# LAZY LOADING
+CHAPTER_LAZY_LOADING = config.getboolean("loading", "chapter_loading")
+CONTENT_LAZY_LOADING = config.getboolean("loading", "content_loading")
+
 ADMINS = (
     # ('Your Name', 'your_email@example.com'),
 )

@@ -37,7 +37,7 @@ class ZhangBookDiff(object):
 
     def diff(self):
         book = self.get_book()
-        chapters = book.chapter_set.all()
+        chapters = book.chapters
 
         for chapter in chapters:
             print("第" + number2chinese(chapter.number) + "章")

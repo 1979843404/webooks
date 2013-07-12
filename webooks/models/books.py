@@ -37,6 +37,15 @@ class Book(models.Model, GetByUniqueMixin):
     def __unicode__(self):
         return self.name
 
+    @property
+    def chapters(self):
+        chapters = self.chapter_set.all()
+        if chapters:
+           return chapters
+        if settings.CHAPTER_LAZY_LOADING:
+            self.lazy_loading()
+        return self.chapter_set.all()
+
     @permalink
     def get_absolute_url(self):
         return ('book_detail', [self.id, ])
@@ -123,8 +132,14 @@ class Chapter(models.Model, GetByUniqueMixin):
     def __unicode__(self):
         return "%s" %self.title
 
+    @property
     def full_content(self):
-        return self.content
+        if self.content:
+            return self.content
+        else:
+            if settings.CONTENT_LAZY_LOADING:
+                self.lazy_loading()
+            return self.content
 
     @permalink
     def get_api_url(self):

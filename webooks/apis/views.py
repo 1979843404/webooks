@@ -32,7 +32,12 @@ class ChapterList(ListAPIView):
     serializer_class = ChapterListSerializer
 
     def get_queryset(self):
-        return Chapter.filter_by_queries(**self.kwargs)
+        """最好的写法是
+        Chapter.filter_by_queries(**self.kwargs)
+        为了lazy loading，改下
+        """
+        book = Book.get_by_unique(id=self.kwargs.get("book_id", ""))
+        return book.chapters
 
 class ChapterView(APIView):
     def get(self, request, **kwargs):

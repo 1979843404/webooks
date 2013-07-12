@@ -16,7 +16,7 @@ class Command(BaseCommand):
             self.format(book)
 
     def format(self, book):
-        chapters = book.chapter_set.all()
+        chapters = book.chapters
         for chapter in chapters:
             url = chapter.src_url
             try:
