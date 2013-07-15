@@ -3,12 +3,19 @@
 
 from __future__ import division, unicode_literals, print_function
 from state import StateManager
+from state import WX_AFTER_SUBSCRIBE
 
 class State(object):
-    def __init__(self, from_user_name, to_user_name):
+    def __init__(self, from_user_name, to_user_name, **kwargs):
         self.to_user_name = to_user_name
         self.from_user_name = from_user_name
         self.state = StateManager.get_user_state(from_user_name, to_user_name)
+
+    @classmethod
+    def after_subscribe(cls, from_user_name, to_user_name, **kwargs):
+        item = cls(from_user_name, to_user_name, **kwargs)
+        item.set_state(state=WX_AFTER_SUBSCRIBE)
+        return item
 
     def handle(self, content):
         new_state_index, result = self.state.handle(content)

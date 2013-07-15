@@ -4,9 +4,7 @@
 from __future__ import division, unicode_literals, print_function
 from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
-from weixin import WeiXin
-from webooks.states import State
-import time
+from webooks.weixin.receiver import WeiXinReceiver
 
 @csrf_exempt
 def interface(request):
@@ -15,12 +13,7 @@ def interface(request):
         return HttpResponse(echostr)
     else:
         content = request.body
-        wx = WeiXin.on_message(content)
-        json_data = wx.to_json()
-        content = json_data.get("Content", "")
-        from_user_name = json_data.get("FromUserName", "")
-        to_user_name = json_data.get("ToUserName", "")
-        state = State(to_user_name=from_user_name, from_user_name=to_user_name)
+        state = WeiXinReceiver.get_state(content)
         state.handle(content)
         xml_data = state.to_xml()
         return HttpResponse(xml_data)

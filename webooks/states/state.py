@@ -11,6 +11,7 @@ from collections import OrderedDict
 SMILE = u"/::)"
 ANGRY = u"/::@"
 
+WX_AFTER_SUBSCRIBE = "subscribe"
 WX_INDEX = "index"
 WX_SEARCH_BOOKS = "search_books"
 WX_BOOK_DETAIL = "book_detail"
@@ -61,6 +62,9 @@ class StateIndex(StateInterface):
             return WX_INDEX, {}
         else:
             return WX_INDEX, {}
+
+class StateAfterSubscribe(StateIndex):
+    pass
 
 class StateSearchAuthors(StateInterface):
     @classmethod
@@ -188,7 +192,8 @@ class StateManager(object):
         WX_INDEX: StateIndex,
         WX_SEARCH_BOOKS: StateSearchBooks,
         WX_BOOK_DETAIL: StateBookDetail,
-        WX_SEARCH_AUTHORS: StateSearchAuthors
+        WX_SEARCH_AUTHORS: StateSearchAuthors,
+        WX_AFTER_SUBSCRIBE: StateAfterSubscribe
     }
 
     @classmethod

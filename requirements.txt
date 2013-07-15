@@ -13,3 +13,4 @@ gunicorn
 raven
 django-grappelli
 django-redis
+PIL
