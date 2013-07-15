@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{{ book.name }}</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="user-scalable=no, width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" href="/static/webooks/css/reset.css" type="text/css" />
+    <link rel="stylesheet" href="/static/webooks/css/details.css" type="text/css" />
+    <link rel="stylesheet" href="/static/webooks/css/common.css" type="text/css" />
+</head>
+<body>
+<div class="container clearfix">
+    <h2>{{ book.name }}</h2>
+    <div class="info-container clearfix">
+        <img src="statics/images/default.jpg" />
+        <ul>
+            <li>书名：{{ book.name }}</li>
+            <li>作者：{{ book.author }}</li>
+            <li>分类：奇幻</li>
+        </ul>
+    </div>
+    <h3>详细介绍</h3>
+    <div class="details">
+       {{ book.description }}［<a target="_blank" href="{% url "book_chapters" book.id %}">点击阅读</a>］
+    </div>
+</div>
+</body>
+</html>
