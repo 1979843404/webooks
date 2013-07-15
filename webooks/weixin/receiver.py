@@ -15,11 +15,11 @@ class WeiXinReceiver(object):
         return handler(**json_data)
 
     @classmethod
-    def event(cls, from_user_name, to_user_name, **kwargs):
-        state = State.after_subscribe(to_user_name=from_user_name, from_user_name=to_user_name)
+    def event(cls, FromUserName, ToUserName, **kwargs):
+        state = State.after_subscribe(to_user_name=FromUserName, from_user_name=ToUserName)
         return state
 
     @classmethod
-    def text(cls, from_user_name, to_user_name, **kwargs):
-        state = State(to_user_name=from_user_name, from_user_name=to_user_name)
+    def text(cls, FromUserName, ToUserName, **kwargs):
+        state = State(to_user_name=FromUserName, from_user_name=ToUserName)
         return state
