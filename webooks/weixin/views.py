@@ -14,6 +14,5 @@ def interface(request):
     else:
         content = request.body
         state = WeiXinReceiver.get_state(content)
-        state.handle(content)
         xml_data = state.to_xml()
         return HttpResponse(xml_data)

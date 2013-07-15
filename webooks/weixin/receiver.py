@@ -14,6 +14,7 @@ class WeiXinReceiver(object):
         handler = getattr(cls, msg_type, cls.text)
         return handler(**json_data)
 
+
     @classmethod
     def event(cls, FromUserName, ToUserName, **kwargs):
         state = State.after_subscribe(to_user_name=FromUserName, from_user_name=ToUserName)
@@ -22,4 +23,5 @@ class WeiXinReceiver(object):
     @classmethod
     def text(cls, FromUserName, ToUserName, **kwargs):
         state = State(to_user_name=FromUserName, from_user_name=ToUserName)
+        state.handle(kwargs.get("Content", ""))
         return state
