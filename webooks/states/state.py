@@ -4,10 +4,11 @@
 from __future__ import division, unicode_literals, print_function
 from webooks.utils.cache import cache
 from webooks.utils.const import USER_STATE
-from webooks.models import Book, History, Chapter
+from webooks.models import Book, History
 from webooks.utils.helper import get_url_by_conf
 from webooks.weixin.weixin import WeiXin
 from collections import OrderedDict
+from django.conf import settings
 
 SMILE = u"/::)"
 ANGRY = u"/::@"
@@ -200,8 +201,8 @@ class StateUserHistory(StateInterface):
             article = {
                 "title": u"%s" % unicode(history),
                 "description": u"",
-                "picurl": "",
-                "url": get_url_by_conf("book_chapter_detail",
+                "picurl": "http://icons.iconarchive.com/icons/oxygen-icons.org/oxygen/256/Actions-go-next-icon.png",
+                "url": settings.DOMAIN + get_url_by_conf("book_chapter_detail",
                     args=[history.book_id, history.chapter_id], params={
                         "user_id": self.to_user_name
                     })
@@ -210,6 +211,7 @@ class StateUserHistory(StateInterface):
         if not articles:
             return self._to_wx_text(content="对不起没有您的阅读历史")
         else:
+            articles[0]['picurl'] = "http://cayman.b0.upaiyun.com/71509cef7a4940aea89fa6d512be8715.jpeg!medium"
             return self._to_full_text(articles)
 
     def handle(self, content):
