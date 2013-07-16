@@ -14,6 +14,7 @@ class BookDetailView(TemplateView):
         context = super(BookDetailView, self).get_context_data(**kwargs)
         book = Book.objects.get(**kwargs)
         context["book"] = book
+        context['user_id'] = self.request.GET.get("user_id", "-1")
         return context
 
 class BookChapterView(TemplateView):
@@ -26,7 +27,11 @@ class BookChapterView(TemplateView):
         queryset = Chapter.objects.filter(book_id=book_id)
         paginator = DiggPaginator(queryset, 10, body=5)
         context['page'] = paginator.page(page)
-        context['base_url'] = get_url_by_conf("book_chapters", args=[book_id])
+        user_id = self.request.GET.get("user_id", "-1")
+        context['base_url'] = get_url_by_conf("book_chapters", args=[book_id], params={
+            "user_id": user_id
+        })
+        context['user_id'] = user_id
         return context
 
 class ChapterDetailView(TemplateView):
@@ -37,7 +42,15 @@ class ChapterDetailView(TemplateView):
         chapter_id = kwargs['id']
         chapter = Chapter.objects.get(id=chapter_id)
         context['chapter'] = chapter
-        context['before_url'] = get_url_by_conf("book_chapter_detail", args=[chapter.book.id, chapter.before.id]) if chapter.before else ""
-        context['after_url'] = get_url_by_conf("book_chapter_detail", args=[chapter.book.id, chapter.after.id]) if chapter.after else ""
-        context['chapter_list_url'] = get_url_by_conf("book_chapters", args=[chapter.book.id])
+        user_id = self.request.GET.get("user_id", "-1")
+        context['before_url'] = get_url_by_conf("book_chapter_detail", args=[chapter.book.id, chapter.before.id], params={
+            "user_id": user_id,
+        }) if chapter.before else ""
+        context['after_url'] = get_url_by_conf("book_chapter_detail", args=[chapter.book.id, chapter.after.id], params={
+            "user_id": user_id
+        }) if chapter.after else ""
+        context['chapter_list_url'] = get_url_by_conf("book_chapters", args=[chapter.book.id], params={
+            "user_id": user_id
+        })
+        context['user_id'] = user_id
         return context

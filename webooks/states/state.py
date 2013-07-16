@@ -166,7 +166,7 @@ class StateBookDetail(StateInterface):
                     "title": u"%s" % item.name,
                     "description": u"%s" %item.description,
                     "picurl": "http://cayman.b0.upaiyun.com/71509cef7a4940aea89fa6d512be8715.jpeg!medium",
-                    "url": item.absolute_url,
+                    "url": item.absolute_url + "?user_id=%s" %self.to_user_name,
                 }
             ]
             return self._to_full_text(articles)
@@ -175,7 +175,7 @@ class StateBookDetail(StateInterface):
 
     def handle(self, content):
         if content == "0":
-            return WX_INDEX, {"content": u"回到首页"}
+            return WX_INDEX, {}
         elif content == "1":
             return WX_BOOK_DETAIL, {
                 "content": u"展示%s章节列表" %self.meta.get("book", {}).get("name", ""), "book": self.meta.get("book", "")
