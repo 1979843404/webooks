@@ -25,8 +25,6 @@ class BookDetailSerializer(serializers.ModelSerializer):
 class ChapterDetailSerializer(serializers.ModelSerializer):
     class Meta:
         model = Chapter
-        fields = ("id", "title", "book", "full_content", "before", "after")
+        fields = ("id", "title", "book", "full_content")
 
     full_content = serializers.CharField(max_length=const.DB_CONTENT_LENGTH, default="")
-    before = serializers.CharField(max_length=const.DB_URL_LENGTH, default="")
-    after = serializers.CharField(max_length=const.DB_URL_LENGTH, default="")

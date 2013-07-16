@@ -12,10 +12,17 @@
 <div class="container clearfix">
     <div class="info-container clearfix">
         <ul>
-            {% for chapter in chapters %}
+            {% for chapter in page.object_list %}
                 <li><a href="{% url "book_chapter_detail" chapter.book.id chapter.id %}">{{ chapter.title }}</a></li>
             {% endfor %}
         </ul>
+    </div>
+    <div>
+        {% for num in page.page_range %}
+            {% if num %} <a href="{{ base_url }}?page={{ num }}">{{ num }}</a>
+            {% else %} ...
+            {% endif %}
+        {% endfor %}
     </div>
 </div>
 </body>

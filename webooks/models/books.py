@@ -152,10 +152,7 @@ class Chapter(models.Model, GetByUniqueMixin):
             "number": self.number-1
         }
         chapter = Chapter.get_by_queries(**queries)
-        if not chapter:
-            return ""
-        else:
-            return chapter.get_api_url()
+        return chapter
 
     @property
     def after(self):
@@ -164,10 +161,7 @@ class Chapter(models.Model, GetByUniqueMixin):
             "number": self.number+1
         }
         chapter = Chapter.get_by_queries(**queries)
-        if not chapter:
-            return ""
-        else:
-            return chapter.get_api_url()
+        return chapter
 
     @classmethod
     def get_or_create(cls, book, number, **kwargs):
