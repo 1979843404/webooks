@@ -3,7 +3,7 @@
 
 from __future__ import division, unicode_literals, print_function
 from django.views.generic import TemplateView
-from webooks.models import Book, Chapter
+from webooks.models import Book, Chapter, History
 from webooks.utils.helper import get_url_by_conf
 from webooks.utils.paginator import DiggPaginator
 
@@ -40,9 +40,11 @@ class ChapterDetailView(TemplateView):
     def get_context_data(self, **kwargs):
         context = super(ChapterDetailView, self).get_context_data(**kwargs)
         chapter_id = kwargs['id']
-        chapter = Chapter.objects.get(id=chapter_id)
-        context['chapter'] = chapter
         user_id = self.request.GET.get("user_id", "-1")
+        chapter = Chapter.objects.get(id=chapter_id)
+        self.saving_history(user_id, chapter)
+
+        context['chapter'] = chapter
         context['before_url'] = get_url_by_conf("book_chapter_detail", args=[chapter.book.id, chapter.before.id], params={
             "user_id": user_id,
         }) if chapter.before else ""
@@ -54,3 +56,6 @@ class ChapterDetailView(TemplateView):
         })
         context['user_id'] = user_id
         return context
+
+    def saving_history(self, user_id, chapter):
+        History.update_or_create(user_id, chapter.book.id, chapter.id)

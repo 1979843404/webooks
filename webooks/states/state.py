@@ -50,7 +50,7 @@ class StateIndex(StateInterface):
     @classmethod
     def initial(cls, from_user_name, to_user_name):
         return cls(from_user_name, to_user_name, meta={
-            "content": u"欢迎使用 你的小说 您可以:\n1.搜书名\n2.搜作者\n0.回到首页"
+            "content": u"欢迎使用 你的小说 您可以:\n1.搜书名\n2.搜作者\n3.查看历史\n0.回到首页"
         })
 
     def handle(self, content):
