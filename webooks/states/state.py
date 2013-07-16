@@ -4,7 +4,8 @@
 from __future__ import division, unicode_literals, print_function
 from webooks.utils.cache import cache
 from webooks.utils.const import USER_STATE
-from webooks.models import Book
+from webooks.models import Book, History, Chapter
+from webooks.utils.helper import get_url_by_conf
 from webooks.weixin.weixin import WeiXin
 from collections import OrderedDict
 
@@ -16,6 +17,7 @@ WX_INDEX = "index"
 WX_SEARCH_BOOKS = "search_books"
 WX_BOOK_DETAIL = "book_detail"
 WX_SEARCH_AUTHORS ="search_authors"
+WX_USER_HISTORY = "user_history"
 
 class StateInterface(object):
     def __init__(self, from_user_name, to_user_name, meta={}):
@@ -59,7 +61,7 @@ class StateIndex(StateInterface):
         elif content == "2":
             return WX_SEARCH_AUTHORS, {}
         elif content == "3":
-            return WX_INDEX, {}
+            return WX_USER_HISTORY, {}
         else:
             return WX_INDEX, {}
 
@@ -187,13 +189,40 @@ class StateBookDetail(StateInterface):
         else:
             return WX_SEARCH_BOOKS, {}
 
+class StateUserHistory(StateInterface):
+    def to_xml(self):
+        queries = {
+            "user_id": self.to_user_name,
+        }
+        histories = History.filter_by_queries(**queries)
+        articles = []
+        for history in histories:
+            article = {
+                "title": u"%s" % unicode(history),
+                "description": u"",
+                "picurl": "",
+                "url": get_url_by_conf("book_chapter_detail",
+                    args=[history.book_id, history.chapter_id], params={
+                        "user_id": self.to_user_name
+                    })
+            }
+            articles.append(article)
+        if not articles:
+            return self._to_wx_text(content="对不起没有您的阅读历史")
+        else:
+            return self._to_full_text(articles)
+
+    def handle(self, content):
+        return WX_INDEX, {}
+
 class StateManager(object):
     mapping = {
         WX_INDEX: StateIndex,
         WX_SEARCH_BOOKS: StateSearchBooks,
         WX_BOOK_DETAIL: StateBookDetail,
         WX_SEARCH_AUTHORS: StateSearchAuthors,
-        WX_AFTER_SUBSCRIBE: StateAfterSubscribe
+        WX_AFTER_SUBSCRIBE: StateAfterSubscribe,
+        WX_USER_HISTORY: StateUserHistory
     }
 
     @classmethod
