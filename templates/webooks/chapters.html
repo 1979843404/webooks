@@ -19,7 +19,7 @@
     </div>
     <div>
         {% for num in page.page_range %}
-            {% if num %} <a href="{{ base_url }}?page={{ num }}">{{ num }}</a>
+            {% if num %} <a href="{{ base_url }}&page={{ num }}">{{ num }}</a>
             {% else %} ...
             {% endif %}
         {% endfor %}
