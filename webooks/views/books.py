@@ -14,8 +14,11 @@ class AutoRegisterMixin(object):
         if account_id == '-1':
             return
 
-        account = WeiXin.objects.get_or_create(id=account_id)
-        account.save()
+        account, _ = WeiXin.objects.get_or_create(id=account_id)
+
+    def get_context_data(self, **kwargs):
+        self.check_user()
+        return super(AutoRegisterMixin, self).get_context_data(self, **kwargs)
 
 class BookDetailView(TemplateView, AutoRegisterMixin):
     template_name = "webooks/detail.html"
