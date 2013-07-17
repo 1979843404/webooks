@@ -6,8 +6,18 @@ from django.views.generic import TemplateView
 from webooks.models import Book, Chapter, History
 from webooks.utils.helper import get_url_by_conf
 from webooks.utils.paginator import DiggPaginator
+from webooks.models import WeiXin
 
-class BookDetailView(TemplateView):
+class AutoRegisterMixin(object):
+    def check_user(self):
+        account_id = self.request.GET.get("account_id", "-1")
+        if account_id == '-1':
+            return
+
+        account = WeiXin.objects.get_or_create(id=account_id)
+        account.save()
+
+class BookDetailView(TemplateView, AutoRegisterMixin):
     template_name = "webooks/detail.html"
 
     def get_context_data(self, **kwargs):
@@ -17,7 +27,7 @@ class BookDetailView(TemplateView):
         context['account_id'] = self.request.GET.get("account_id", "-1")
         return context
 
-class BookChapterView(TemplateView):
+class BookChapterView(TemplateView, AutoRegisterMixin):
     template_name = "webooks/chapters.html"
 
     def get_context_data(self, **kwargs):
@@ -34,7 +44,7 @@ class BookChapterView(TemplateView):
         context['account_id'] = account_id
         return context
 
-class ChapterDetailView(TemplateView):
+class ChapterDetailView(TemplateView, AutoRegisterMixin):
     template_name = "webooks/chapters_detail.html"
 
     def get_context_data(self, **kwargs):
@@ -58,4 +68,5 @@ class ChapterDetailView(TemplateView):
         return context
 
     def saving_history(self, account_id, chapter):
+        self.check_user()
         History.update_or_create(account_id, chapter.book.id, chapter.id)
