@@ -39,4 +39,3 @@ class WeiXin(Account):
              update_fields=None):
         self.src_from = const.FROM_WEIXIN_KEY
         super(WeiXin, self).save(force_insert, force_update, using, update_fields)
-        

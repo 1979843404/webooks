@@ -13,7 +13,7 @@
     <div class="info-container clearfix">
         <ul>
             {% for chapter in page.object_list %}
-                <li><a href="{% url "book_chapter_detail" chapter.book.id chapter.id %}?user_id={{ user_id }}">{{ chapter.title }}</a></li>
+                <li><a href="{% url "book_chapter_detail" chapter.book.id chapter.id %}?account_id={{ account_id }}">{{ chapter.title }}</a></li>
             {% endfor %}
         </ul>
     </div>
