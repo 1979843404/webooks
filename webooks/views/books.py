@@ -14,7 +14,7 @@ class BookDetailView(TemplateView):
         context = super(BookDetailView, self).get_context_data(**kwargs)
         book = Book.objects.get(**kwargs)
         context["book"] = book
-        context['user_id'] = self.request.GET.get("user_id", "-1")
+        context['account_id'] = self.request.GET.get("account_id", "-1")
         return context
 
 class BookChapterView(TemplateView):
@@ -27,11 +27,11 @@ class BookChapterView(TemplateView):
         queryset = Chapter.objects.filter(book_id=book_id)
         paginator = DiggPaginator(queryset, 10, body=5)
         context['page'] = paginator.page(page)
-        user_id = self.request.GET.get("user_id", "-1")
+        account_id = self.request.GET.get("account_id", "-1")
         context['base_url'] = get_url_by_conf("book_chapters", args=[book_id], params={
-            "user_id": user_id
+            "account_id": account_id
         })
-        context['user_id'] = user_id
+        context['account_id'] = account_id
         return context
 
 class ChapterDetailView(TemplateView):
@@ -40,22 +40,22 @@ class ChapterDetailView(TemplateView):
     def get_context_data(self, **kwargs):
         context = super(ChapterDetailView, self).get_context_data(**kwargs)
         chapter_id = kwargs['id']
-        user_id = self.request.GET.get("user_id", "-1")
+        account_id = self.request.GET.get("account_id", "-1")
         chapter = Chapter.objects.get(id=chapter_id)
-        self.saving_history(user_id, chapter)
+        self.saving_history(account_id, chapter)
 
         context['chapter'] = chapter
         context['before_url'] = get_url_by_conf("book_chapter_detail", args=[chapter.book.id, chapter.before.id], params={
-            "user_id": user_id,
+            "account_id": account_id,
         }) if chapter.before else ""
         context['after_url'] = get_url_by_conf("book_chapter_detail", args=[chapter.book.id, chapter.after.id], params={
-            "user_id": user_id
+            "account_id": account_id
         }) if chapter.after else ""
         context['chapter_list_url'] = get_url_by_conf("book_chapters", args=[chapter.book.id], params={
-            "user_id": user_id
+            "account_id": account_id
         })
-        context['user_id'] = user_id
+        context['account_id'] = account_id
         return context
 
-    def saving_history(self, user_id, chapter):
-        History.update_or_create(user_id, chapter.book.id, chapter.id)
+    def saving_history(self, account_id, chapter):
+        History.update_or_create(account_id, chapter.book.id, chapter.id)

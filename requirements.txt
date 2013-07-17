@@ -14,3 +14,4 @@ raven
 django-grappelli
 django-redis
 PIL
+django-bitfield

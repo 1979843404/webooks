@@ -169,7 +169,7 @@ class StateBookDetail(StateInterface):
                     "title": u"%s" % item.name,
                     "description": u"%s" %item.description,
                     "picurl": "http://cayman.b0.upaiyun.com/71509cef7a4940aea89fa6d512be8715.jpeg!medium",
-                    "url": item.absolute_url + "?user_id=%s" %self.to_user_name,
+                    "url": item.absolute_url + "?account_id=%s" %self.to_user_name,
                 }
             ]
             return self._to_full_text(articles)
@@ -193,7 +193,7 @@ class StateBookDetail(StateInterface):
 class StateUserHistory(StateInterface):
     def to_xml(self):
         queries = {
-            "user_id": self.to_user_name,
+            "account_id": self.to_user_name,
         }
         histories = History.filter_by_queries(**queries)
         articles = []
@@ -204,7 +204,7 @@ class StateUserHistory(StateInterface):
                 "picurl": "http://icons.iconarchive.com/icons/oxygen-icons.org/oxygen/256/Actions-go-next-icon.png",
                 "url": settings.DOMAIN + get_url_by_conf("book_chapter_detail",
                     args=[history.book_id, history.chapter_id], params={
-                        "user_id": self.to_user_name
+                        "account_id": self.to_user_name
                     })
             }
             articles.append(article)
