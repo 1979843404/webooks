@@ -37,6 +37,7 @@ class Book(models.Model, GetByUniqueMixin):
     def __unicode__(self):
         return self.name
 
+
     @property
     def chapters(self):
         chapters = self.chapter_set.all()
